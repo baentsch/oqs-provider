@@ -17,12 +17,14 @@ jobs:
 #          - windows-2022
         platform:
           - arch: win64
-            config: enable-fips enable-quic
+            config: -DOQS_ALGS_ENABLED=STD
 #          - arch: win32
 #            config: --strict-warnings no-fips enable-quic
     runs-on: ${{matrix.os}}
     steps:
     - uses: cygwin/cygwin-install-action@master
+      with:
+         packages: perl
 #    - uses: ilammy/msvc-dev-cmd@v1
 #      with:
 #        arch: ${{ matrix.platform.arch }}
