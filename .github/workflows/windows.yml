@@ -37,7 +37,7 @@ jobs:
     - name: Output PWD
       run: echo "PWD = $(pwd)"
     - name: Test output
-      run: bash -c "pwd && git version"
+      run: bash -c "pwd && git clone --branch main --depth 1 https://github.com/baentsch/oqs-provider.git"
 #    - name: prep git
 #      run: bash -c "git config --global --add safe.directory `pwd`"
 #     - name: manual checkout
