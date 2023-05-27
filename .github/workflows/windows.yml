@@ -34,6 +34,12 @@ jobs:
 #    - uses: shogo82148/actions-setup-perl@v1
 #    - name: prepare CRLF
 #      run: git config --global core.autocrlf input
+    - name: Output PWD
+      run: echo "PWD = `pwd`"
+    - name: Output PWD
+      run: echo "PWD = $(pwd)"
+    - name: prep git
+      run: git config --global --add safe.directory `pwd`
     - uses: actions/checkout@v3
     - name: Full build
       run: bash -o igncr scripts/fullbuild.sh
