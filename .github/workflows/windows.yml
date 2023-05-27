@@ -39,7 +39,7 @@ jobs:
 #    - name: prep git
 #      run: bash -c "git config --global --add safe.directory `pwd`"
      - name: manual checkout
-       run bash -c "pwd && echo $PATH && git checkout --branch main --depth 1 https://github.com/baentsch/oqs-provider.git"
+       run: bash -c "pwd && echo $PATH && git checkout --branch main --depth 1 https://github.com/baentsch/oqs-provider.git"
 #    - uses: actions/checkout@v3
 #      with:
 #        set-safe-directory: true
