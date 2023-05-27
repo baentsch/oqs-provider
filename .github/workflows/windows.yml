@@ -37,7 +37,7 @@ jobs:
     - name: Output PWD
       run: echo "PWD = $(pwd)"
     - name: Test output
-      run: echo "Hello World"
+      run: bash -c "echo 'Hello World'"
 #    - name: prep git
 #      run: bash -c "git config --global --add safe.directory `pwd`"
 #     - name: manual checkout
