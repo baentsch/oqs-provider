@@ -23,7 +23,7 @@ jobs:
     runs-on: ${{matrix.os}}
     steps:
     - name: Output env
-      echo "Env = $GITHUB_ENV"
+      run: echo "Env = $GITHUB_ENV"
     - uses: cygwin/cygwin-install-action@master
       with:
          packages: perl git
