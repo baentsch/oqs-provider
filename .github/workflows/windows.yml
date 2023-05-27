@@ -34,9 +34,9 @@ jobs:
     - name: prepare CRLF
       run: git config --global core.autocrlf input
     - name: Full build
-      run: ./scripts/fullbuild.sh
+      run: bash scripts/fullbuild.sh
     - name: Run tests
-      run: ./scripts/runtests.sh -V
+      run: bash scripts/runtests.sh -V
 #    - name: config
 #      working-directory: _build
 #      run: |
