@@ -43,7 +43,7 @@ jobs:
 #     - name: manual checkout
 #       run: bash -c "pwd && echo $PATH && git checkout --branch main --depth 1 https://github.com/baentsch/oqs-provider.git"
     - name: Full build
-      run: bash -c "pwd && echo $PATH && ls && ./scripts/fullbuild.sh"
+      run: bash -c "pwd && cd oqs-provider && echo 'PATH = $PATH' && ls && ./scripts/fullbuild.sh"
     - name: Run tests
       run: bash scripts/runtests.sh -V
 #    - name: config
