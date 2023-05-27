@@ -30,11 +30,11 @@ jobs:
 #      with:
 #        platform: ${{ matrix.platform.arch }}
 #    - uses: shogo82148/actions-setup-perl@v1
-    - name: prepare CRLF
-      run: git config --global core.autocrlf input
+#    - name: prepare CRLF
+#      run: git config --global core.autocrlf input
     - uses: actions/checkout@v3
     - name: Full build
-      run: bash scripts/fullbuild.sh
+      run: bash -o igncr scripts/fullbuild.sh
     - name: Run tests
       run: bash scripts/runtests.sh -V
 #    - name: config
