@@ -24,19 +24,19 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - uses: cygwin/cygwin-install-action@master
-    - uses: ilammy/msvc-dev-cmd@v1
-      with:
-        arch: ${{ matrix.platform.arch }}
-    - uses: ilammy/setup-nasm@v1
-      with:
-        platform: ${{ matrix.platform.arch }}
-    - uses: shogo82148/actions-setup-perl@v1
+#    - uses: ilammy/msvc-dev-cmd@v1
+#      with:
+#        arch: ${{ matrix.platform.arch }}
+#    - uses: ilammy/setup-nasm@v1
+#      with:
+#        platform: ${{ matrix.platform.arch }}
+#    - uses: shogo82148/actions-setup-perl@v1
     - name: prepare CRLF
       run: git config --global core.autocrlf input
-    - name: Test bash
-      run: bash -c "echo 'Hello World'"
-    - name: prepare the build directory
-      run: mkdir _build
+    - name: Full build
+      run: ./scripts/fullbuild.sh
+    - name: Run tests
+      run: ./scripts/runtests.sh -V
 #    - name: config
 #      working-directory: _build
 #      run: |
@@ -56,27 +56,3 @@ jobs:
 #        nmake install DESTDIR=_dest
 #      working-directory: _build
 
-  minimal:
-    strategy:
-      matrix:
-        os:
-          - windows-2019
-#          - windows-2022
-    runs-on: ${{matrix.os}}
-    steps:
-    - uses: actions/checkout@v3
-    - uses: ilammy/msvc-dev-cmd@v1
-    - uses: shogo82148/actions-setup-perl@v1
-    - name: prepare the build directory
-      run: mkdir _build
-#    - name: config
-#      working-directory: _build
-#      run: |
-#        perl ..\Configure --banner=Configured no-makedepend no-bulk no-deprecated no-fips no-asm -DOPENSSL_SMALL_FOOTPRINT
-#        perl configdata.pm --dump
-#    - name: build
-#      working-directory: _build
-#      run: nmake # verbose, so no /S here
-#    - name: test
-#      working-directory: _build
-#      run: nmake test VERBOSE_FAILURE=yes TESTS=-test_fuzz* HARNESS_JOBS=4
