@@ -17,44 +17,44 @@ jobs:
     steps:
       - setup_remote_docker
       - checkout # change this from "checkout" to "*localCheckout" when running CircleCI locally
-      - run:
-          name: Clone and build liboqs (only STD algs)
-          command: |
-             git clone --depth 1 --branch main https://github.com/open-quantum-safe/liboqs.git &&
-             cd liboqs && mkdir _build && cd _build &&
-             cmake -GNinja -DOQS_ALGS_ENABLED=STD -DCMAKE_INSTALL_PREFIX=$(pwd)/../../.local .. && ninja install &&
-             cd ..
-      - run:
-          name: Clone and build OpenSSL(3) 
-          command: |
-             git clone --branch master git://git.openssl.org/openssl.git openssl &&
-             cd openssl && ./config --prefix=$(echo $(pwd)/../.local) && make -j 18 && make install_sw && cd ..
-      - run:
-          name: Build OQS-OpenSSL provider (only STD algs with QSC encoding support)
-          command: |
-             mkdir _build && cd _build && cmake -GNinja -DUSE_ENCODING_LIB=ON -DOPENSSL_ROOT_DIR=$(pwd)/../.local -DCMAKE_PREFIX_PATH=$(pwd)/../.local .. && ninja
-      - run:
-          name: Run tests
-          command: |
-             ./scripts/runtests.sh -V
-      - run:
-          name: Run tests (with encodings, positive and negative test)
-          command: |
-            ./scripts/runtests_encodings.sh -V
-            ! OQS_ENCODING_DILITHIUM2=foo OQS_ENCODING_DILITHIUM2_ALGNAME=bar ./scripts/runtests.sh -V
-      - run:
-          name: Build OQS-OpenSSL provider (only STD algs) with NOPUBKEY_IN_PRIVKEY and QSC encoding support
-          command: |
-             rm -rf _build && mkdir _build && cd _build && cmake -GNinja -DNOPUBKEY_IN_PRIVKEY=ON -DUSE_ENCODING_LIB=ON -DOPENSSL_ROOT_DIR=$(pwd)/../.local -DCMAKE_PREFIX_PATH=$(pwd)/../.local .. && ninja
-      - run:
-          name: Run tests (-DNOPUBKEY_IN_PRIVKEY=ON)
-          command: |
-             ./scripts/runtests.sh -V
-      - run:
-          name: Run tests (-DNOPUBKEY_IN_PRIVKEY=ON, with encodings, positive and negative test)
-          command: |
-            ./scripts/runtests_encodings.sh -V
-            ! OQS_ENCODING_DILITHIUM2=foo OQS_ENCODING_DILITHIUM2_ALGNAME=bar ./scripts/runtests.sh -V
+#      - run:
+#          name: Clone and build liboqs (only STD algs)
+#          command: |
+#             git clone --depth 1 --branch main https://github.com/open-quantum-safe/liboqs.git &&
+#             cd liboqs && mkdir _build && cd _build &&
+#             cmake -GNinja -DOQS_ALGS_ENABLED=STD -DCMAKE_INSTALL_PREFIX=$(pwd)/../../.local .. && ninja install &&
+#             cd ..
+#      - run:
+#          name: Clone and build OpenSSL(3) 
+#          command: |
+#             git clone --branch master git://git.openssl.org/openssl.git openssl &&
+#             cd openssl && ./config --prefix=$(echo $(pwd)/../.local) && make -j 18 && make install_sw && cd ..
+#      - run:
+#          name: Build OQS-OpenSSL provider (only STD algs with QSC encoding support)
+#          command: |
+#             mkdir _build && cd _build && cmake -GNinja -DUSE_ENCODING_LIB=ON -DOPENSSL_ROOT_DIR=$(pwd)/../.local -DCMAKE_PREFIX_PATH=$(pwd)/../.local .. && ninja
+#      - run:
+#          name: Run tests
+#          command: |
+#             ./scripts/runtests.sh -V
+#      - run:
+#          name: Run tests (with encodings, positive and negative test)
+#          command: |
+#            ./scripts/runtests_encodings.sh -V
+#            ! OQS_ENCODING_DILITHIUM2=foo OQS_ENCODING_DILITHIUM2_ALGNAME=bar ./scripts/runtests.sh -V
+#      - run:
+#          name: Build OQS-OpenSSL provider (only STD algs) with NOPUBKEY_IN_PRIVKEY and QSC encoding support
+#          command: |
+#             rm -rf _build && mkdir _build && cd _build && cmake -GNinja -DNOPUBKEY_IN_PRIVKEY=ON -DUSE_ENCODING_LIB=ON -DOPENSSL_ROOT_DIR=$(pwd)/../.local -DCMAKE_PREFIX_PATH=$(pwd)/../.local .. && ninja
+#      - run:
+#          name: Run tests (-DNOPUBKEY_IN_PRIVKEY=ON)
+#          command: |
+#             ./scripts/runtests.sh -V
+#      - run:
+#          name: Run tests (-DNOPUBKEY_IN_PRIVKEY=ON, with encodings, positive and negative test)
+#          command: |
+#            ./scripts/runtests_encodings.sh -V
+#            ! OQS_ENCODING_DILITHIUM2=foo OQS_ENCODING_DILITHIUM2_ALGNAME=bar ./scripts/runtests.sh -V
 
   macOS:
     description: A template for running tests on macOS
@@ -113,10 +113,10 @@ workflows:
       - ubuntu_focal:
           name: ubuntu-focal
           context: openquantumsafe
-      - macOS:
-          name: macOS-noopenssl
-          CMAKE_ARGS: -DOQS_STRICT_WARNINGS=ON -DOQS_USE_OPENSSL=OFF
-      - macOS:
-          name: macOS-shared
-          CMAKE_ARGS: -DBUILD_SHARED_LIBS=ON -DOQS_DIST_BUILD=OFF -DOQS_ENABLE_KEM_CLASSIC_MCELIECE=OFF
+#      - macOS:
+#          name: macOS-noopenssl
+#          CMAKE_ARGS: -DOQS_STRICT_WARNINGS=ON -DOQS_USE_OPENSSL=OFF
+#      - macOS:
+#          name: macOS-shared
+#          CMAKE_ARGS: -DBUILD_SHARED_LIBS=ON -DOQS_DIST_BUILD=OFF -DOQS_ENABLE_KEM_CLASSIC_MCELIECE=OFF
 

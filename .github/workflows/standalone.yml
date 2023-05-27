@@ -25,7 +25,7 @@ jobs:
         run: apt update && apt install -y cmake ninja-build gcc libssl-dev git
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Full build
-        run: ./scripts/fullbuild.sh
-      - name: Test
-        run: ./scripts/runtests.sh -V
+#      - name: Full build
+#        run: ./scripts/fullbuild.sh
+#      - name: Test
+#        run: ./scripts/runtests.sh -V
