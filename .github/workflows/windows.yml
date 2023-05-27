@@ -24,7 +24,7 @@ jobs:
     steps:
     - uses: cygwin/cygwin-install-action@master
       with:
-         packages: perl git make gcc
+         packages: perl git make gcc-core
 #    - uses: ilammy/msvc-dev-cmd@v1
 #      with:
 #        arch: ${{ matrix.platform.arch }}
