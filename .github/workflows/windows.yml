@@ -22,8 +22,6 @@ jobs:
 #            config: --strict-warnings no-fips enable-quic
     runs-on: ${{matrix.os}}
     steps:
-    - name: prepare CRLF
-      run: git config --global core.autocrlf input
     - uses: cygwin/cygwin-install-action@master
     - uses: actions/checkout@v3
 #    - uses: ilammy/msvc-dev-cmd@v1
@@ -33,6 +31,8 @@ jobs:
 #      with:
 #        platform: ${{ matrix.platform.arch }}
 #    - uses: shogo82148/actions-setup-perl@v1
+    - name: prepare CRLF
+      run: bash -c "git config --global core.autocrlf input"
     - name: Full build
       run: bash scripts/fullbuild.sh
     - name: Run tests
