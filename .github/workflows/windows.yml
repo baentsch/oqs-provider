@@ -23,7 +23,7 @@ jobs:
     runs-on: ${{matrix.os}}
     steps:
     - name: Show PATH (1)
-      run: dir env:
+      run: echo "PATH is $PATH"
     - uses: cygwin/cygwin-install-action@master
       with:
          packages: perl
