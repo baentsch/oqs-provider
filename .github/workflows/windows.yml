@@ -22,13 +22,9 @@ jobs:
 #            config: --strict-warnings no-fips enable-quic
     runs-on: ${{matrix.os}}
     steps:
-    - name: Show PATH (1)
-      run: echo "PATH is $PATH"
     - uses: cygwin/cygwin-install-action@master
       with:
-         packages: perl
-    - name: Show PATH
-      run: echo $PATH
+         packages: perl git
 #    - uses: ilammy/msvc-dev-cmd@v1
 #      with:
 #        arch: ${{ matrix.platform.arch }}
