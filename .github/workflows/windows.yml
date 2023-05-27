@@ -22,13 +22,6 @@ jobs:
 #            config: --strict-warnings no-fips enable-quic
     runs-on: ${{matrix.os}}
     steps:
-    - name: Output env
-      run: echo "Env = $GITHUB_ENV"
-    - name: Output env 2
-      run: echo "Env = ${{ env }}"
-    - uses: cygwin/cygwin-install-action@master
-    - name: Output env 3
-      run: echo "Env = ${{ env.path }}"
     - uses: cygwin/cygwin-install-action@master
       with:
          packages: perl git
@@ -43,9 +36,16 @@ jobs:
 #      run: git config --global core.autocrlf input
     - name: Output PWD
       run: echo "PWD = $(pwd)"
-    - name: prep git
-      run: bash -c "git config --global --add safe.directory `pwd`"
+#    - name: prep git
+#      run: bash -c "git config --global --add safe.directory `pwd`"
     - uses: actions/checkout@v3
+      with:
+        set-safe-directory: true
+    - uses: actions/checkout@v3
+      with:
+        set-safe-directory: true
+        repository: openssl/openssl
+        path: openssl
     - name: Full build
       run: bash -o igncr scripts/fullbuild.sh
     - name: Run tests
