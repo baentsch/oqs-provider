@@ -41,7 +41,7 @@ if [ -z "$OPENSSL_INSTALL" ]; then
    if [ ! -d "openssl" ]; then
       echo "openssl not specified and doesn't reside where expected: Cloning and building..."
       # for full debug build add: enable-trace enable-fips --debug
-      git config --global core.autocrlf input && export OSSL_PREFIX=`pwd`/.local && git clone --depth 1 --branch $OPENSSL_BRANCH git://git.openssl.org/openssl.git && cd openssl && LDFLAGS="-Wl,-rpath -Wl,${OSSL_PREFIX}/lib64" ./config --prefix=$OSSL_PREFIX && pwd && perl configdata.pm --dump && cat Makefile && make $MAKE_PARAMS && make install_sw install_ssldirs && cd ..
+      git config --global core.autocrlf input && export OSSL_PREFIX=`pwd`/.local && git clone --depth 1 --branch $OPENSSL_BRANCH git://git.openssl.org/openssl.git && cd openssl && LDFLAGS="-Wl,-rpath -Wl,${OSSL_PREFIX}/lib64" ./config --prefix=$OSSL_PREFIX && pwd && perl configdata.pm --dump && ls -l /cygdrive/d/a/oqs-provider/oqs-provider/openssl/Configurations/00-base-templates.conf && ls -l /cygdrive/d/a/oqs-provider/oqs-provider/openssl/Configurations && make $MAKE_PARAMS && make install_sw install_ssldirs && cd ..
       if [ $? -ne 0 ]; then
         echo "openssl build failed. Exiting."
         exit -1
