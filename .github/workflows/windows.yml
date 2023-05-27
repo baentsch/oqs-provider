@@ -36,22 +36,14 @@ jobs:
 #      run: git config --global core.autocrlf input
     - name: Output PWD
       run: echo "PWD = $(pwd)"
-    - name: Test output
+    - name: Manual clone 
       run: bash -c "pwd && git clone --branch main --depth 1 https://github.com/baentsch/oqs-provider.git"
 #    - name: prep git
 #      run: bash -c "git config --global --add safe.directory `pwd`"
 #     - name: manual checkout
 #       run: bash -c "pwd && echo $PATH && git checkout --branch main --depth 1 https://github.com/baentsch/oqs-provider.git"
-    - uses: actions/checkout@v3
-      with:
-        set-safe-directory: true
-    - uses: actions/checkout@v3
-      with:
-        set-safe-directory: true
-        repository: openssl/openssl
-        path: openssl
     - name: Full build
-      run: bash -o igncr scripts/fullbuild.sh
+      run: bash -c "pwd && ./scripts/fullbuild.sh"
     - name: Run tests
       run: bash scripts/runtests.sh -V
 #    - name: config
