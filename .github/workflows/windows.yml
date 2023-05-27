@@ -25,6 +25,8 @@ jobs:
     - uses: cygwin/cygwin-install-action@master
       with:
          packages: perl
+    - name: Show PATH
+      run: echo $PATH
 #    - uses: ilammy/msvc-dev-cmd@v1
 #      with:
 #        arch: ${{ matrix.platform.arch }}
