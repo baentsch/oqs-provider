@@ -25,9 +25,9 @@ jobs:
       CYGWIN_NOWINPATH: 1
       SHELLOPTS: igncr
     steps:
-#    - uses: cygwin/cygwin-install-action@master
-#      with:
-#         packages: perl git make gcc-core
+    - uses: cygwin/cygwin-install-action@master
+      with:
+         packages: perl git make gcc-core
 #    - uses: ilammy/msvc-dev-cmd@v1
 #      with:
 #        arch: ${{ matrix.platform.arch }}
