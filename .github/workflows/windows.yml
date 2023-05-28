@@ -44,7 +44,9 @@ jobs:
     - name: list bins
       run: dir c:\cygwin\bin
     - name: find openssl
-      run: bash -c "find / -name "openssl*" -print"
+      run: bash -c "find / -name 'openssl*' -print"
+    - name: find libcrypto
+      run: bash -c "find / -name 'libcrypto*' -print"
     - name: Clone repo 
       run: bash -c "pwd && git clone --branch ${{ github.ref_name }} --depth 1 https://github.com/${{ github.repository }}.git"
     - name: Full build
