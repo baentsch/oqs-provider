@@ -28,7 +28,8 @@ jobs:
     steps:
     - uses: cygwin/cygwin-install-action@master
       with:
-         packages: libssl-devel:3.0.8-0.1 openssl:3.0.8-0.1  perl git make gcc-core
+         packages: libssl-devel3 openssl3  perl git make gcc-core
+#         packages: libssl-devel3.0.8-0.1 openssl:3.0.8-0.1  perl git make gcc-core
 # Disabled as cygwin seems to cause PATH problems
 #    - uses: actions/checkout@v3
     - name: Clone repo 
