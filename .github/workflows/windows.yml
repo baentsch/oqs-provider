@@ -24,6 +24,7 @@ jobs:
     env:
       CYGWIN_NOWINPATH: 1
       SHELLOPTS: igncr
+      MAKE_PARAMS: -j 4
     steps:
     - uses: cygwin/cygwin-install-action@master
       with:
