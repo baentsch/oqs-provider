@@ -28,7 +28,7 @@ jobs:
     steps:
     - uses: cygwin/cygwin-install-action@master
       with:
-         packages: libssl-devel openssl perl git make gcc-core
+         packages: libssl-devel-3.0.8-0.1 openssl-3.0.8-0.1 perl git make gcc-core
 #         packages: libssl-devel3.0.8-0.1 openssl:3.0.8-0.1  perl git make gcc-core
 # Disabled as cygwin seems to cause PATH problems
 #    - uses: actions/checkout@v3
@@ -36,10 +36,10 @@ jobs:
       run: cygcheck -V
     - name: Full cygcheck debug
       run: cygcheck -s -v -r -h 
-    - name: Check for crypto32
-      run: cygcheck -p 'crypto32'
+    - name: Check for libssl
+      run: cygcheck -p 'libssl-devel'
     - name: Check for openssl
-      run: cygcheck -p 'openssl'
+      run: cygcheck -p 'openssl-3'
     - name: Clone repo 
       run: bash -c "pwd && git clone --branch ${{ github.ref_name }} --depth 1 https://github.com/${{ github.repository }}.git"
     - name: Full build
