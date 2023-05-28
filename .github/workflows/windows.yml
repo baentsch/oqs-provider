@@ -8,7 +8,7 @@ permissions:
   contents: read
 
 jobs:
-  shared:
+  cygwin:
     # Run a job for each of the specified target architectures:
     strategy:
       matrix:
@@ -27,44 +27,13 @@ jobs:
     steps:
     - uses: cygwin/cygwin-install-action@master
       with:
-         packages: perl git make gcc-core
-#    - uses: ilammy/msvc-dev-cmd@v1
-#      with:
-#        arch: ${{ matrix.platform.arch }}
-#    - uses: ilammy/setup-nasm@v1
-#      with:
-#        platform: ${{ matrix.platform.arch }}
-#    - uses: shogo82148/actions-setup-perl@v1
-#    - name: prepare CRLF
-#      run: git config --global core.autocrlf input
+         packages: perl git make gcc-core openssl libssl-devel
+# Disabled as cygwin seems to cause PATH problems
 #    - uses: actions/checkout@v3
-#    - run: echo "Repo: ${{ github.repository }} at branch ${{ github.ref }}"
-    - name: Manual clone 
+    - name: Clone repo 
       run: bash -c "pwd && git clone --branch ${{ github.ref_name }} --depth 1 https://github.com/${{ github.repository }}.git"
-#    - name: prep git
-#      run: bash -c "git config --global --add safe.directory `pwd`"
-#     - name: manual checkout
-#       run: bash -c "pwd && echo $PATH && git checkout --branch main --depth 1 https://github.com/baentsch/oqs-provider.git"
     - name: Full build
       run: bash -c "pwd && cd oqs-provider && echo 'PATH = $PATH' && ls && ./scripts/fullbuild.sh"
     - name: Run tests
       run: bash scripts/runtests.sh -V
-#    - name: config
-#      working-directory: _build
-#      run: |
-#        perl ..\Configure --banner=Configured no-makedepend ${{ matrix.platform.config }}
-#        perl configdata.pm --dump
-#    - name: build
-#      working-directory: _build
-#      run: nmake /S
-#    - name: test
-#      working-directory: _build
-#      run: nmake test VERBOSE_FAILURE=yes TESTS=-test_fuzz* HARNESS_JOBS=4
-#    - name: install
-#      # Run on 64 bit only as 32 bit is slow enough already
-#      if: $${{ matrix.platform.arch == 'win64' }}
-#      run: |
-#        mkdir _dest
-#        nmake install DESTDIR=_dest
-#      working-directory: _build
 
