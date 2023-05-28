@@ -39,6 +39,12 @@ jobs:
       run: cygcheck -p 'libssl-devel'
     - name: Check for openssl
       run: cygcheck -p 'openssl-3'
+    - name: run openssl
+      run: bash -c "openssl version"
+    - name: list bins
+      run: dir c:\cygwin\bin
+    - name: find openssl
+      run: bash -c "find / -name "openssl*" -print"
     - name: Clone repo 
       run: bash -c "pwd && git clone --branch ${{ github.ref_name }} --depth 1 https://github.com/${{ github.repository }}.git"
     - name: Full build
