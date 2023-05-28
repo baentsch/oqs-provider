@@ -21,6 +21,8 @@ jobs:
 #          - arch: win32
 #            config: --strict-warnings no-fips enable-quic
     runs-on: ${{matrix.os}}
+    env:
+      CYGWIN_NOWINPATH: 1
     steps:
     - uses: cygwin/cygwin-install-action@master
       with:
@@ -32,8 +34,8 @@ jobs:
 #      with:
 #        platform: ${{ matrix.platform.arch }}
 #    - uses: shogo82148/actions-setup-perl@v1
-#    - name: prepare CRLF
-#      run: git config --global core.autocrlf input
+    - name: prepare CRLF
+      run: git config --global core.autocrlf input
     - uses: actions/checkout@v3
       with:
         set-safe-directory: true
