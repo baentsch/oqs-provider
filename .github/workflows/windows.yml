@@ -23,6 +23,7 @@ jobs:
     runs-on: ${{matrix.os}}
     env:
       CYGWIN_NOWINPATH: 1
+      SHELLOPTS: igncr
     steps:
     - uses: cygwin/cygwin-install-action@master
       with:
@@ -34,13 +35,13 @@ jobs:
 #      with:
 #        platform: ${{ matrix.platform.arch }}
 #    - uses: shogo82148/actions-setup-perl@v1
-    - name: prepare CRLF
-      run: git config --global core.autocrlf input
-    - uses: actions/checkout@v3
-      with:
-        set-safe-directory: true
-#    - name: Manual clone 
-#      run: bash -c "pwd && git clone --branch win2 --depth 1 https://github.com/baentsch/oqs-provider.git"
+#    - name: prepare CRLF
+#      run: git config --global core.autocrlf input
+#    - uses: actions/checkout@v3
+    - name: Output status
+      run: echo "Repo: ${{ github.repository }} at branch ${{ github.ref }}"
+    - name: Manual clone 
+      run: bash -c "pwd && git clone --branch ${{ github.ref }} --depth 1 ${{ github.repository }}"
 #    - name: prep git
 #      run: bash -c "git config --global --add safe.directory `pwd`"
 #     - name: manual checkout
