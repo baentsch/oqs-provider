@@ -17,7 +17,7 @@ jobs:
 #          - windows-2022
         platform:
           - arch: win64
-            config: -DOQS_ALGS_ENABLED=STD
+            config: -DOQS_ALGS_ENABLED=STD -DCMAKE_C_COMPILER=gcc 
 #          - arch: win32
 #            config: --strict-warnings no-fips enable-quic
     runs-on: ${{matrix.os}}
@@ -25,6 +25,7 @@ jobs:
       CYGWIN_NOWINPATH: 1
       SHELLOPTS: igncr
       MAKE_PARAMS: -j 4
+      LIBOQS_CONFIG: ${{ matrix.platform.config }}
     steps:
 #    - uses: ilammy/msvc-dev-cmd@v1
 #      with:

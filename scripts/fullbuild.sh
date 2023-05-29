@@ -5,6 +5,7 @@
 # Argument -F: Hard clean, ensuring checkout and build of all dependencies
 # EnvVar MAKE_PARAMS: passed to invocations of make; sample value: "-j"
 # EnvVar LIBOQS_BRANCH: Defines branch/release of liboqs; default value "main"
+# EnvVar LIBOQS_CONFIG: Defines cmake config param(s) used when building liboqs; default value ""
 # EnvVar OQS_ALGS_ENABLED: If set, defines OQS algs to be enabled, e.g., "STD"
 # EnvVar OPENSSL_INSTALL: If set, defines (binary) OpenSSL installation to use
 # EnvVar OPENSSL_BRANCH: Defines branch/release of openssl; if set, forces source-build of OpenSSL3
@@ -81,7 +82,7 @@ if [ ! -f ".local/lib/liboqs.a" ]; then
  #    STD: only include NIST standardized algorithms
  #    NIST_R4: only include algorithms in round 4 of the NIST competition
  #    All: include all algorithms supported by liboqs (default)
- cd liboqs && cmake -GNinja $DOQS_ALGS_ENABLED -DCMAKE_INSTALL_PREFIX=$(pwd)/../.local -S . -B _build && cd _build && ninja && ninja install && cd ../..
+ cd liboqs && cmake -GNinja $DOQS_ALGS_ENABLED $LIBOQS_CONFIG -DCMAKE_INSTALL_PREFIX=$(pwd)/../.local -S . -B _build && cd _build && ninja && ninja install && cd ../..
  if [ $? -ne 0 ]; then
      echo "liboqs build failed. Exiting."
      exit -1
