@@ -26,6 +26,9 @@ jobs:
       SHELLOPTS: igncr
       MAKE_PARAMS: -j 4
     steps:
+    - uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: ${{ matrix.platform.arch }}
     - uses: cygwin/cygwin-install-action@master
       with:
          packages: libssl-devel=3.0.8-0.1 openssl=3.0.8-0.1  perl git make gcc-core
@@ -43,14 +46,14 @@ jobs:
       run: bash -c "openssl version"
     - name: list bins
       run: dir c:\cygwin\bin
-    - name: find openssl
-      run: bash -c "find / -name 'openssl*' -print"
-    - name: find libcrypto
-      run: bash -c "find / -name 'libcrypto*' -print"
+#    - name: find openssl
+#      run: bash -c "find /cygdrive/c -name 'openssl*' -print"
     - name: Clone repo 
       run: bash -c "pwd && git clone --branch ${{ github.ref_name }} --depth 1 https://github.com/${{ github.repository }}.git"
     - name: Full build
       run: bash -c "pwd && cd oqs-provider && echo 'PATH = $PATH' && ls && ./scripts/fullbuild.sh"
+    - name: find libcrypto
+      run: bash -c "find /cygdrive/c -name 'libcrypto*' -print"
     - name: Run tests
       run: bash scripts/runtests.sh -V
 
