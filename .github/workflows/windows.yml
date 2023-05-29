@@ -26,12 +26,12 @@ jobs:
       SHELLOPTS: igncr
       MAKE_PARAMS: -j 4
     steps:
-    - uses: ilammy/msvc-dev-cmd@v1
-      with:
-        arch: ${{ matrix.platform.arch }}
+#    - uses: ilammy/msvc-dev-cmd@v1
+#      with:
+#        arch: ${{ matrix.platform.arch }}
     - uses: cygwin/cygwin-install-action@master
       with:
-         packages: libssl-devel=3.0.8-0.1 openssl=3.0.8-0.1  perl git make gcc-core
+         packages: perl git make gcc-core ninja python3 python3-pip python3-pytest
 # Disabled as cygwin seems to cause PATH problems
 #    - uses: actions/checkout@v3
     - name: Check repo
@@ -40,16 +40,6 @@ jobs:
 #      run: bash -c "find /cygdrive/c -name 'libcrypto*' -print"
     - name: Full cygcheck debug
       run: cygcheck -s -v -r -h 
-    - name: Check for libssl
-      run: cygcheck -p 'libssl-devel'
-    - name: Check for openssl
-      run: cygcheck -p 'openssl-3'
-    - name: run openssl
-      run: bash -c "openssl version"
-    - name: list bins
-      run: dir c:\cygwin\bin
-#    - name: find openssl
-#      run: bash -c "find /cygdrive/c -name 'openssl*' -print"
     - name: Clone repo 
       run: bash -c "pwd && git clone --branch ${{ github.ref_name }} --depth 1 https://github.com/${{ github.repository }}.git"
     - name: Full build
