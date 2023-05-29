@@ -36,6 +36,8 @@ jobs:
 #    - uses: actions/checkout@v3
     - name: Check repo
       run: cygcheck -V
+    - name: find libcrypto
+      run: bash -c "find /cygdrive/c -name 'libcrypto*' -print"
     - name: Full cygcheck debug
       run: cygcheck -s -v -r -h 
     - name: Check for libssl
@@ -52,8 +54,6 @@ jobs:
       run: bash -c "pwd && git clone --branch ${{ github.ref_name }} --depth 1 https://github.com/${{ github.repository }}.git"
     - name: Full build
       run: bash -c "pwd && cd oqs-provider && echo 'PATH = $PATH' && ls && ./scripts/fullbuild.sh"
-    - name: find libcrypto
-      run: bash -c "find /cygdrive/c -name 'libcrypto*' -print"
     - name: Run tests
       run: bash scripts/runtests.sh -V
 
