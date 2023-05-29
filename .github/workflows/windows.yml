@@ -36,8 +36,8 @@ jobs:
 #    - uses: actions/checkout@v3
     - name: Check repo
       run: cygcheck -V
-    - name: find libcrypto
-      run: bash -c "find /cygdrive/c -name 'libcrypto*' -print"
+#    - name: find libcrypto
+#      run: bash -c "find /cygdrive/c -name 'libcrypto*' -print"
     - name: Full cygcheck debug
       run: cygcheck -s -v -r -h 
     - name: Check for libssl
