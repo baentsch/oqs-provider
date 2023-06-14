@@ -28,15 +28,26 @@ jobs:
           set-safe-directory: true
           repository: openssl/openssl
           path: openssl
+      - uses: actions/checkout@v3
+        with:
+          set-safe-directory: true
+          repository: openquantumsafe/liboqs
+          path: liboqs
       - uses: cygwin/cygwin-install-action@master
         with:
-          packages: perl git
+          packages: perl git ninja gcc
       - name: Output PWD
         run: echo "PWD = $(pwd)" && ls
-      - name: Full build
-        run: bash -o igncr scripts/fullbuild.sh
+      - name: build liboqs
+        run: bash -o igncr -c "cmake -DCMAKE_INSTALL_PREFIX=$(pwd)/../.local -S . -B _build && cmake --build _build && cmake --install _build"
+        working-directory: liboqs
+      - name: build openssl3
+        run: bash -o igncr -c "./config --prefix=$(echo $(pwd)/../.local) && make && make install_sw"
+        working-directory: openssl
+      - name: build oqs-provider
+        run: bash -o igncr -c "cmake -DOPENSSL_ROOT_DIR=$(pwd)/.local -DCMAKE_PREFIX_PATH=$(pwd)/.local -S . -B _build && cmake --build _build"
       - name: Run tests
-        run: bash scripts/runtests.sh -V
+        run: bash -o igncr -c "ctest --test-dir _build"
   msvc:
 # Run a job for each of the specified target architectures:
     strategy:
@@ -70,7 +81,7 @@ jobs:
           pwd
           dir openssl
       - name: config
-        working-directory: openssl\build
+        working-directory: openssl\_build
         run: |
           perl ..\Configure --banner=Configured no-makedepend ${{ matrix.platform.config }}
           perl configdata.pm --dump
@@ -87,4 +98,10 @@ jobs:
           mkdir _dest
           nmake install DESTDIR=_dest
         working-directory: openssl\_build
+      - name: build liboqs
+        run: |
+          cmake -DCMAKE_INSTALL_PREFIX=$(pwd)/../.local -S . -B _build
+          cmake --build _build --parallel
+          cmake --install _build
+        working-directory: liboqs
 
