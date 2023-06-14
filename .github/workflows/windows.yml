@@ -32,6 +32,7 @@ jobs:
         with:
           set-safe-directory: true
           repository: openquantumsafe/liboqs
+          ref: main
           path: liboqs
       - uses: cygwin/cygwin-install-action@master
         with:
@@ -80,6 +81,8 @@ jobs:
           dir
           pwd
           dir openssl
+      - name: prepare the build directory
+        run: mkdir _build
       - name: config
         working-directory: openssl\_build
         run: |
