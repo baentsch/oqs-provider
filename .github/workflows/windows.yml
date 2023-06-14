@@ -23,6 +23,7 @@ jobs:
     runs-on: ${{matrix.os}}
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
         with:
           set-safe-directory: true
           repository: openssl/openssl
@@ -51,6 +52,7 @@ jobs:
     runs-on: ${{matrix.os}}
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
         with:
           set-safe-directory: true
           repository: openssl/openssl
@@ -68,15 +70,15 @@ jobs:
           pwd
           dir openssl
       - name: config
-        working-directory: openssl/build
+        working-directory: openssl\build
         run: |
           perl ..\Configure --banner=Configured no-makedepend ${{ matrix.platform.config }}
           perl configdata.pm --dump
       - name: build
-        working-directory: openssl/_build
+        working-directory: openssl\_build
         run: nmake /S
       - name: test
-        working-directory: openssl/_build
+        working-directory: openssl\_build
         run: nmake test VERBOSE_FAILURE=yes TESTS=-test_fuzz* HARNESS_JOBS=4
       - name: install
         # Run on 64 bit only as 32 bit is slow enough already
@@ -84,5 +86,5 @@ jobs:
         run: |
           mkdir _dest
           nmake install DESTDIR=_dest
-        working-directory: openssl/_build
+        working-directory: openssl\_build
 
