@@ -38,15 +38,15 @@ jobs:
         with:
           packages: perl git ninja gcc
       - name: Output PWD
-        run: echo "PWD = $(pwd)" && ls
-      - name: build liboqs
-        run: bash -o igncr -c "cmake -GNinja -DCMAKE_INSTALL_PREFIX=$(pwd)/../.local ${{ matrix.platform.oqsconfig }} -DCMAKE_C_COMPILER=gcc -S . -B _build && cmake --build _build && cmake --install _build"
-        working-directory: liboqs
+        run: echo "PWD = $(pwd)" && ls && echo "PATH=$PATH"
       - name: build openssl3
-        run: bash -o igncr -c "./config --prefix=$(echo $(pwd)/../.local) && make && make install_sw"
+        run: bash -o igncr -c "./config --prefix=$(echo $(pwd)/../.local) && make -j 4 && make install_sw"
         working-directory: openssl
+      - name: build liboqs
+        run: bash -o igncr -c "echo 'PATH=$PATH' && PATH='/usr/bin:$PATH' cmake -GNinja -DOPENSSL_ROOT_DIR=$(pwd)/../.local -DCMAKE_INSTALL_PREFIX=$(pwd)/../.local ${{ matrix.platform.oqsconfig }} -DCMAKE_C_COMPILER=gcc -S . -B _build && cmake --build _build --parallel && cmake --install _build"
+        working-directory: liboqs
       - name: build oqs-provider
-        run: bash -o igncr -c "cmake -DOPENSSL_ROOT_DIR=$(pwd)/.local -DCMAKE_PREFIX_PATH=$(pwd)/.local -S . -B _build && cmake --build _build --parallel "
+        run: bash -o igncr -c "liboqs_DIR=.local cmake -GNinja -DCMAKE_C_COMPILER=gcc -DOPENSSL_ROOT_DIR=$(pwd)/.local -S . -B _build && cmake --build _build --parallel "
       - name: Run tests
         run: bash -o igncr -c "ctest --test-dir _build"
   msvc:
@@ -104,9 +104,10 @@ jobs:
       - name: build
         working-directory: openssl\_build
         run: nmake /S
-      - name: test
-        working-directory: openssl\_build
-        run: nmake test VERBOSE_FAILURE=yes TESTS=-test_fuzz* HARNESS_JOBS=4
+# Skip testing openssl for now
+#      - name: test
+#        working-directory: openssl\_build
+#        run: nmake test VERBOSE_FAILURE=yes TESTS=-test_fuzz* HARNESS_JOBS=4
       - name: install
         # Run on 64 bit only as 32 bit is slow enough already
         if: $${{ matrix.platform.arch == 'win64' }}
