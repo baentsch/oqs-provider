@@ -17,7 +17,7 @@ jobs:
 #          - windows-2022
         platform:
           - arch: win64
-            config: -DOQS_ALGS_ENABLED=STD
+            oqsconfig: -DOQS_ALGS_ENABLED=STD
 #          - arch: win32
 #            config: --strict-warnings no-fips enable-quic
     runs-on: ${{matrix.os}}
@@ -40,13 +40,13 @@ jobs:
       - name: Output PWD
         run: echo "PWD = $(pwd)" && ls
       - name: build liboqs
-        run: bash -o igncr -c "cmake -DCMAKE_INSTALL_PREFIX=$(pwd)/../.local -S . -B _build && cmake --build _build && cmake --install _build"
+        run: bash -o igncr -c "cmake -GNinja -DCMAKE_INSTALL_PREFIX=$(pwd)/../.local ${{ matrix.platform.oqsconfig }} -DCMAKE_C_COMPILER=gcc -S . -B _build && cmake --build _build && cmake --install _build"
         working-directory: liboqs
       - name: build openssl3
         run: bash -o igncr -c "./config --prefix=$(echo $(pwd)/../.local) && make && make install_sw"
         working-directory: openssl
       - name: build oqs-provider
-        run: bash -o igncr -c "cmake -DOPENSSL_ROOT_DIR=$(pwd)/.local -DCMAKE_PREFIX_PATH=$(pwd)/.local -S . -B _build && cmake --build _build"
+        run: bash -o igncr -c "cmake -DOPENSSL_ROOT_DIR=$(pwd)/.local -DCMAKE_PREFIX_PATH=$(pwd)/.local -S . -B _build && cmake --build _build --parallel "
       - name: Run tests
         run: bash -o igncr -c "ctest --test-dir _build"
   msvc:
@@ -59,6 +59,7 @@ jobs:
         platform:
           - arch: win64
             oqsconfig: -DOQS_ALGS_ENABLED=STD
+            config: no-shared no-fips VC-WIN64A-masm
 #          - arch: win32
 #            config: --strict-warnings no-fips enable-quic
     runs-on: ${{matrix.os}}
@@ -86,7 +87,13 @@ jobs:
           dir
           pwd
           dir openssl
-      - name: prepare the build directory
+      - name: build liboqs
+        run: |
+          cmake -DCMAKE_INSTALL_PREFIX=$(pwd)\..\.local ${{ matrix.platform.oqsconfig }} -S . -B _build
+          cmake --build _build --parallel
+          cmake --install _build
+        working-directory: liboqs
+      - name: prepare the openssl build directory
         run: mkdir _build
         working-directory: openssl
       - name: config
@@ -107,10 +114,4 @@ jobs:
           mkdir _dest
           nmake install DESTDIR=_dest
         working-directory: openssl\_build
-      - name: build liboqs
-        run: |
-          cmake -DCMAKE_INSTALL_PREFIX=$(pwd)/../.local -S . -B _build
-          cmake --build _build --parallel
-          cmake --install _build
-        working-directory: liboqs
 
