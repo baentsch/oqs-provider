@@ -8,7 +8,7 @@ permissions:
   contents: read
 
 jobs:
-  shared:
+  cygwin:
     # Run a job for each of the specified target architectures:
     strategy:
       matrix:
