@@ -111,12 +111,12 @@ jobs:
           pwd
           dir c:\openssl3
 # OQS_USE_OPENSSL=OFF by default on Win32
+# if cmake --build fails, try explicit
+# cd _build && msbuild ALL_BUILD.vcxproj -p:Configuration=Release
       - name: build liboqs
         run: |
           cmake --debug-output -DCMAKE_INSTALL_PREFIX="$(pwd)\..\.local" ${{ matrix.platform.oqsconfig }} -S . -B _build
           cmake --debug-output --build _build --parallel
-# if cmake --build fails, try explicit
-# cd _build && msbuild ALL_BUILD.vcxproj -p:Configuration=Release
           cmake --install _build
         working-directory: liboqs
 #      - name: prepare the openssl build directory
