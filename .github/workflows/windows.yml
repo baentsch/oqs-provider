@@ -57,16 +57,17 @@ jobs:
            which cmake
            cmake --version
            echo "pwd=$(pwd)"
+           echo "pwd=$(cygpath -u '$PWD')"
            gcc --version
-           cmake --debug-output -GNinja -DCMAKE_INSTALL_PREFIX=$(pwd)/../.local ${{ matrix.platform.oqsconfig }} -DCMAKE_C_COMPILER=gcc -S $(pwd) -B _build
+           cmake --debug-output -GNinja -DCMAKE_INSTALL_PREFIX=$(cygpath -u '$PWD')/../.local ${{ matrix.platform.oqsconfig }} -DCMAKE_C_COMPILER=gcc -S $(cygpath -u '$PWD') -B _build
            cmake --debug-output --build _build 
            cmake --install _build
         working-directory: liboqs
       - name: build openssl3
-        run: bash -o igncr -c "ls && ./config --prefix=$(echo $(pwd)/../.local) && make -j 4 && make install_sw"
+        run: bash -o igncr -c "ls && ./config --prefix=$(echo $(cygpath -u '$PWD')/../.local) && make -j 4 && make install_sw"
         working-directory: openssl
       - name: build oqs-provider
-        run: bash -o igncr -c "liboqs_DIR=.local cmake -GNinja -DCMAKE_C_COMPILER=gcc -DOPENSSL_ROOT_DIR=$(pwd)/.local -S . -B _build && cmake --build _build --parallel "
+        run: bash -o igncr -c "liboqs_DIR=.local cmake -GNinja -DCMAKE_C_COMPILER=gcc -DOPENSSL_ROOT_DIR=$(cygpath -u '$PWD')/.local -S . -B _build && cmake --build _build --parallel "
       - name: Run tests
         run: bash -o igncr -c "ctest --test-dir _build"
   msvc:
@@ -85,11 +86,11 @@ jobs:
     runs-on: ${{matrix.os}}
     steps:
       - uses: actions/checkout@v3
-#      - uses: actions/checkout@v3
-#        with:
-#          set-safe-directory: true
-#          repository: openssl/openssl
-#          path: openssl
+      - uses: actions/checkout@v3
+        with:
+          set-safe-directory: true
+          repository: openssl/openssl
+          path: openssl
       - uses: actions/checkout@v3
         with:
           set-safe-directory: true
@@ -98,58 +99,54 @@ jobs:
       - uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: ${{ matrix.platform.arch }}
-# only needed for openssl build:
-#      - uses: ilammy/setup-nasm@v1
-#        with:
-#          platform: ${{ matrix.platform.arch }}
-#      - uses: shogo82148/actions-setup-perl@v1
-      - 
-        name: Get Chocolatey
-        uses: crazy-max/ghaction-chocolatey@v2
+      - uses: ilammy/setup-nasm@v1
         with:
-          args: -h
-      - name: Install OpenSSL 3.1.1.
-        run: choco install openssl.light --params "/InstallDir:C:\openssl3"
+          platform: ${{ matrix.platform.arch }}
+      - uses: shogo82148/actions-setup-perl@v1
       - name: Control setup
         run: |
           dir
           pwd
-          dir c:\openssl3
 # OQS_USE_OPENSSL=OFF by default on Win32
 # if cmake --build fails, try explicit
 # cd _build && msbuild ALL_BUILD.vcxproj -p:Configuration=Release
+# fails:          cmake -DCMAKE_C_FLAGS="/wd5105" -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_INSTALL_PREFIX="c:\liboqs" ${{ matrix.platform.oqsconfig }} -S . -B _build
+#          cd _build && msbuild ALL_BUILD.vcxproj -p:Configuration=Release && cd ..
+#          cmake --install _build
       - name: build liboqs
         run: |
           cmake --version
-          cmake -DCMAKE_C_FLAGS="/wd5105" -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_INSTALL_PREFIX="c:\liboqs" ${{ matrix.platform.oqsconfig }} -S . -B _build
-          cd _build && msbuild ALL_BUILD.vcxproj -p:Configuration=Release && cd ..
-          cmake --install _build
+          mkdir build
+          cd build
+          cmake -GNinja -DCMAKE_C_FLAGS="/wd5105" -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_INSTALL_PREFIX="c:\liboqs" ${{ matrix.platform.oqsconfig }} -DOQS_DIST_BUILD=ON ..
+          ninja
+          ninja install
         working-directory: liboqs
-#      - name: prepare the openssl build directory
-#        run: mkdir _build
-#        working-directory: openssl
-#      - name: config
-#        working-directory: openssl\_build
-#        run: |
-#          perl ..\Configure --banner=Configured no-makedepend ${{ matrix.platform.osslconfig }}
-#          perl configdata.pm --dump
-#      - name: build
-#        working-directory: openssl\_build
-#        run: nmake /S
+      - name: prepare the openssl build directory
+        run: mkdir _build
+        working-directory: openssl
+      - name: config
+        working-directory: openssl\_build
+        run: |
+          perl ..\Configure --banner=Configured no-makedepend --prefix=c:\openssl32 ${{ matrix.platform.osslconfig }}
+          perl configdata.pm --dump
+      - name: build
+        working-directory: openssl\_build
+        run: nmake /S
 # Skip testing openssl for now
 #      - name: test
 #        working-directory: openssl\_build
 #        run: nmake test VERBOSE_FAILURE=yes TESTS=-test_fuzz* HARNESS_JOBS=4
-#      - name: install
-#        # Run on 64 bit only as 32 bit is slow enough already
-#        if: $${{ matrix.platform.arch == 'win64' }}
-#        run: |
-#          mkdir _dest
-#          nmake install DESTDIR=_dest
-#        working-directory: openssl\_build
+      - name: install
+        # Run on 64 bit only as 32 bit is slow enough already
+        if: $${{ matrix.platform.arch == 'win64' }}
+        run: |
+          mkdir c:\openssl32
+          nmake install_sw DESTDIR=c:\openssl32
+        working-directory: openssl\_build
       - name: build oqs-provider
         run: |
-          cmake -Dliboqs_DIR="$(pwd)\.local" ${{ matrix.platform.oqsconfig }} -S . -B _build
+          cmake -DOPENSSL_ROOT_DIR=c:\openssl32 -Dliboqs_DIR="$(pwd)\.local" ${{ matrix.platform.oqsconfig }} -S . -B _build
           cmake --build _build --parallel
       - name: Run tests
         run: |
