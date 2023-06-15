@@ -43,6 +43,8 @@ jobs:
         run: echo "PWD = $PWD" && echo "HOME=$HOME"
       - name: Output PWD (bash)
         run: bash -c "echo 'PWD = $(pwd)' && ls && echo 'PATH=$PATH'"
+      - name: convert PWD (bash)
+        run: bash -c "$(cygpath -u '$PWD')"
       - name: output path (win style)
         run: echo "PATH=%PATH%"
       - name: output githubpath
@@ -52,7 +54,7 @@ jobs:
 # PATH= empty ?????
 # OQS_USE_OPENSSL=OFF by default on Win32
       - name: build liboqs
-# fails:        run: bash -o igncr -c "cmake -GNinja -DCMAKE_INSTALL_PREFIX=$(pwd)/../.local ${{ matrix.platform.oqsconfig }} -DCMAKE_C_COMPILER=gcc -S $(pwd) -B $(pwd)/_build && cmake --build _build --parallel && cmake --install _build"
+# fails:        run: bash -o igncr -c "cmake -GNinja -DCMAKE_INSTALL_PREFIX=$(cygpath -u '$PWD')/../.local ${{ matrix.platform.oqsconfig }} -DCMAKE_C_COMPILER=gcc -S $(cygpath -u '$PWD') -B $(cygpath -u '$PWD')/_build && cmake --build _build --parallel && cmake --install _build"
         run: |
            which cmake
            cmake --version
@@ -122,7 +124,7 @@ jobs:
         run: |
           cmake --version
           cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_INSTALL_PREFIX="$(pwd)\..\.local" ${{ matrix.platform.oqsconfig }} -S . -B _build
-          cmake --build _build
+          cd _build && msbuild ALL_BUILD.vcxproj -p:Configuration=Release && cd ..
           cmake --install _build
         working-directory: liboqs
 #      - name: prepare the openssl build directory
