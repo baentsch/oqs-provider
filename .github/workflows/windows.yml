@@ -36,12 +36,13 @@ jobs:
           path: liboqs
       - uses: cygwin/cygwin-install-action@master
         with:
-          packages: perl git ninja gcc
+          packages: perl git ninja gcc cmake
       - name: Output PWD
         run: echo "PWD = $(pwd)" && ls && echo "PATH=$PATH"
+# PATH= empty ?????
 # OQS_USE_OPENSSL=OFF by default on Win32
       - name: build liboqs
-        run: bash -o igncr -c "echo 'PATH=$PATH' && PATH='/usr/bin:$PATH' cmake -GNinja -DCMAKE_INSTALL_PREFIX=$(pwd)/../.local ${{ matrix.platform.oqsconfig }} -DCMAKE_C_COMPILER=gcc -S . -B _build && cmake --build _build --parallel && cmake --install _build"
+        run: bash -o igncr -c "cmake -GNinja -DCMAKE_INSTALL_PREFIX=$(pwd)/../.local ${{ matrix.platform.oqsconfig }} -DCMAKE_C_COMPILER=gcc -S . -B _build && cmake --build _build --parallel && cmake --install _build"
         working-directory: liboqs
       - name: build openssl3
         run: bash -o igncr -c "ls && ./config --prefix=$(echo $(pwd)/../.local) && make -j 4 && make install_sw"
@@ -84,7 +85,11 @@ jobs:
 #        with:
 #          platform: ${{ matrix.platform.arch }}
 #      - uses: shogo82148/actions-setup-perl@v1
-      - uses: crazy-max/ghaction-chocolatey@v2
+      - 
+        name: Get Chocolatey
+        uses: crazy-max/ghaction-chocolatey@v2
+        with:
+          args: -h
       - name: Install OpenSSL 3.1.1.
         run: choco install openssl.light --params "/InstallDir:C:\openssl3"
       - name: Control setup
