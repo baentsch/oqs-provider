@@ -39,10 +39,15 @@ jobs:
           packages: perl git ninja gcc-core cmake
       - name: Output PWD
         run: echo "PWD = $(pwd)" && ls && echo "PATH=$PATH"
+      - name: Output PWD and HOME
+        run: echo "PWD = $PWD" && echo "HOME=$HOME"
       - name: Output PWD (bash)
         run: bash -c "echo 'PWD = $(pwd)' && ls && echo 'PATH=$PATH'"
       - name: output path (win style)
         run: echo "PATH=%PATH%"
+      - name: check bash
+      - name: output githubpath
+        run: echo "GITHUB_PATH=$GITHUB_PATH"
       - name: check bash
         run: which bash
 # PATH= empty ?????
@@ -117,8 +122,8 @@ jobs:
       - name: build liboqs
         run: |
           cmake --version
-          cmake --debug-output -DCMAKE_INSTALL_PREFIX="$(pwd)\..\.local" ${{ matrix.platform.oqsconfig }} -S . -B _build
-          cmake --debug-output --build _build
+          cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_INSTALL_PREFIX="$(pwd)\..\.local" ${{ matrix.platform.oqsconfig }} -S . -B _build
+          cmake --build _build
           cmake --install _build
         working-directory: liboqs
 #      - name: prepare the openssl build directory
