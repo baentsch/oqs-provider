@@ -48,7 +48,14 @@ jobs:
 # PATH= empty ?????
 # OQS_USE_OPENSSL=OFF by default on Win32
       - name: build liboqs
-        run: bash -o igncr -c "cmake -GNinja -DCMAKE_INSTALL_PREFIX=$(pwd)/../.local ${{ matrix.platform.oqsconfig }} -DCMAKE_C_COMPILER=gcc -S $(pwd) -B $(pwd)/_build && cmake --build _build --parallel && cmake --install _build"
+# fails:        run: bash -o igncr -c "cmake -GNinja -DCMAKE_INSTALL_PREFIX=$(pwd)/../.local ${{ matrix.platform.oqsconfig }} -DCMAKE_C_COMPILER=gcc -S $(pwd) -B $(pwd)/_build && cmake --build _build --parallel && cmake --install _build"
+        run: |
+           which cmake
+           cmake --version
+           gcc --version
+           cmake -GNinja -DCMAKE_INSTALL_PREFIX=$(pwd)/../.local ${{ matrix.platform.oqsconfig }} -DCMAKE_C_COMPILER=gcc -S $(pwd) -B $(pwd)/_build
+           cmake --build _build --parallel
+           cmake --install _build
         working-directory: liboqs
       - name: build openssl3
         run: bash -o igncr -c "ls && ./config --prefix=$(echo $(pwd)/../.local) && make -j 4 && make install_sw"
@@ -107,7 +114,9 @@ jobs:
       - name: build liboqs
         run: |
           cmake --debug-output -DCMAKE_INSTALL_PREFIX="$(pwd)\..\.local" ${{ matrix.platform.oqsconfig }} -S . -B _build
-          cmake --build _build --parallel
+          cmake --debug-output --build _build --parallel
+# if cmake --build fails, try explicit
+# cd _build && msbuild ALL_BUILD.vcxproj -p:Configuration=Release
           cmake --install _build
         working-directory: liboqs
 #      - name: prepare the openssl build directory
