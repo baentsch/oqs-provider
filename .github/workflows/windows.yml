@@ -39,12 +39,13 @@ jobs:
           packages: perl git ninja gcc
       - name: Output PWD
         run: echo "PWD = $(pwd)" && ls && echo "PATH=$PATH"
-      - name: build openssl3
-        run: bash -o igncr -c "./config --prefix=$(echo $(pwd)/../.local) && make -j 4 && make install_sw"
-        working-directory: openssl
+# OQS_USE_OPENSSL=OFF by default on Win32
       - name: build liboqs
-        run: bash -o igncr -c "echo 'PATH=$PATH' && PATH='/usr/bin:$PATH' cmake -GNinja -DOPENSSL_ROOT_DIR=$(pwd)/../.local -DCMAKE_INSTALL_PREFIX=$(pwd)/../.local ${{ matrix.platform.oqsconfig }} -DCMAKE_C_COMPILER=gcc -S . -B _build && cmake --build _build --parallel && cmake --install _build"
+        run: bash -o igncr -c "echo 'PATH=$PATH' && PATH='/usr/bin:$PATH' cmake -GNinja -DCMAKE_INSTALL_PREFIX=$(pwd)/../.local ${{ matrix.platform.oqsconfig }} -DCMAKE_C_COMPILER=gcc -S . -B _build && cmake --build _build --parallel && cmake --install _build"
         working-directory: liboqs
+      - name: build openssl3
+        run: bash -o igncr -c "ls && ./config --prefix=$(echo $(pwd)/../.local) && make -j 4 && make install_sw"
+        working-directory: openssl
       - name: build oqs-provider
         run: bash -o igncr -c "liboqs_DIR=.local cmake -GNinja -DCMAKE_C_COMPILER=gcc -DOPENSSL_ROOT_DIR=$(pwd)/.local -S . -B _build && cmake --build _build --parallel "
       - name: Run tests
@@ -78,32 +79,38 @@ jobs:
       - uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: ${{ matrix.platform.arch }}
-      - uses: ilammy/setup-nasm@v1
-        with:
-          platform: ${{ matrix.platform.arch }}
-      - uses: shogo82148/actions-setup-perl@v1
+# only needed for openssl build:
+#      - uses: ilammy/setup-nasm@v1
+#        with:
+#          platform: ${{ matrix.platform.arch }}
+#      - uses: shogo82148/actions-setup-perl@v1
+      - uses: crazy-max/ghaction-chocolatey@v2
+      - name: Install OpenSSL 3.1.1.
+        run: choco install openssl.light --params "/InstallDir:C:\openssl3"
       - name: Control setup
         run: |
           dir
           pwd
           dir openssl
+          dir c:\openssl3
+# OQS_USE_OPENSSL=OFF by default on Win32
       - name: build liboqs
         run: |
-          cmake -DCMAKE_INSTALL_PREFIX=$(pwd)\..\.local ${{ matrix.platform.oqsconfig }} -S . -B _build
+          cmake -DCMAKE_INSTALL_PREFIX=$(pwd)/../.local ${{ matrix.platform.oqsconfig }} -S . -B _build
           cmake --build _build --parallel
           cmake --install _build
         working-directory: liboqs
-      - name: prepare the openssl build directory
-        run: mkdir _build
-        working-directory: openssl
-      - name: config
-        working-directory: openssl\_build
-        run: |
-          perl ..\Configure --banner=Configured no-makedepend ${{ matrix.platform.config }}
-          perl configdata.pm --dump
-      - name: build
-        working-directory: openssl\_build
-        run: nmake /S
+#      - name: prepare the openssl build directory
+#        run: mkdir _build
+#        working-directory: openssl
+#      - name: config
+#        working-directory: openssl\_build
+#        run: |
+#          perl ..\Configure --banner=Configured no-makedepend ${{ matrix.platform.config }}
+#          perl configdata.pm --dump
+#      - name: build
+#        working-directory: openssl\_build
+#        run: nmake /S
 # Skip testing openssl for now
 #      - name: test
 #        working-directory: openssl\_build
