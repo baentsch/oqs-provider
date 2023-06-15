@@ -42,7 +42,7 @@ jobs:
 # PATH= empty ?????
 # OQS_USE_OPENSSL=OFF by default on Win32
       - name: build liboqs
-        run: bash -o igncr -c "cmake -GNinja -DCMAKE_INSTALL_PREFIX=$(pwd)/../.local ${{ matrix.platform.oqsconfig }} -DCMAKE_C_COMPILER=gcc -S . -B _build && cmake --build _build --parallel && cmake --install _build"
+        run: bash -o igncr -c "cmake -GNinja -DCMAKE_INSTALL_PREFIX=$(pwd)/../.local ${{ matrix.platform.oqsconfig }} -DCMAKE_C_COMPILER=gcc -S $(pwd) -B $(pwd)/_build && cmake --build _build --parallel && cmake --install _build"
         working-directory: liboqs
       - name: build openssl3
         run: bash -o igncr -c "ls && ./config --prefix=$(echo $(pwd)/../.local) && make -j 4 && make install_sw"
@@ -96,7 +96,6 @@ jobs:
         run: |
           dir
           pwd
-          dir openssl
           dir c:\openssl3
 # OQS_USE_OPENSSL=OFF by default on Win32
       - name: build liboqs
