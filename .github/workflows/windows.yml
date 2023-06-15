@@ -39,6 +39,12 @@ jobs:
           packages: perl git ninja gcc-core cmake
       - name: Output PWD
         run: echo "PWD = $(pwd)" && ls && echo "PATH=$PATH"
+      - name: Output PWD (bash)
+        run: bash -c "echo 'PWD = $(pwd)' && ls && echo 'PATH=$PATH'"
+      - name: output path (win style)
+        run: echo "PATH=%PATH%"
+      - name: check bash
+        run: which bash
 # PATH= empty ?????
 # OQS_USE_OPENSSL=OFF by default on Win32
       - name: build liboqs
@@ -100,7 +106,7 @@ jobs:
 # OQS_USE_OPENSSL=OFF by default on Win32
       - name: build liboqs
         run: |
-          cmake --trace -DCMAKE_INSTALL_PREFIX="$(pwd)\..\.local" ${{ matrix.platform.oqsconfig }} -S . -B _build
+          cmake --debug-output -DCMAKE_INSTALL_PREFIX="$(pwd)\..\.local" ${{ matrix.platform.oqsconfig }} -S . -B _build
           cmake --build _build --parallel
           cmake --install _build
         working-directory: liboqs
