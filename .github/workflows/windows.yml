@@ -36,7 +36,7 @@ jobs:
           path: liboqs
       - uses: cygwin/cygwin-install-action@master
         with:
-          packages: perl git ninja gcc cmake
+          packages: perl git ninja gcc-core cmake
       - name: Output PWD
         run: echo "PWD = $(pwd)" && ls && echo "PATH=$PATH"
 # PATH= empty ?????
@@ -67,11 +67,11 @@ jobs:
     runs-on: ${{matrix.os}}
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/checkout@v3
-        with:
-          set-safe-directory: true
-          repository: openssl/openssl
-          path: openssl
+#      - uses: actions/checkout@v3
+#        with:
+#          set-safe-directory: true
+#          repository: openssl/openssl
+#          path: openssl
       - uses: actions/checkout@v3
         with:
           set-safe-directory: true
@@ -101,7 +101,7 @@ jobs:
 # OQS_USE_OPENSSL=OFF by default on Win32
       - name: build liboqs
         run: |
-          cmake -DCMAKE_INSTALL_PREFIX=$(pwd)/../.local ${{ matrix.platform.oqsconfig }} -S . -B _build
+          cmake --trace -DCMAKE_INSTALL_PREFIX="$(pwd)\..\.local" ${{ matrix.platform.oqsconfig }} -S . -B _build
           cmake --build _build --parallel
           cmake --install _build
         working-directory: liboqs
@@ -120,11 +120,18 @@ jobs:
 #      - name: test
 #        working-directory: openssl\_build
 #        run: nmake test VERBOSE_FAILURE=yes TESTS=-test_fuzz* HARNESS_JOBS=4
-      - name: install
-        # Run on 64 bit only as 32 bit is slow enough already
-        if: $${{ matrix.platform.arch == 'win64' }}
+#      - name: install
+#        # Run on 64 bit only as 32 bit is slow enough already
+#        if: $${{ matrix.platform.arch == 'win64' }}
+#        run: |
+#          mkdir _dest
+#          nmake install DESTDIR=_dest
+#        working-directory: openssl\_build
+      - name: build oqs-provider
         run: |
-          mkdir _dest
-          nmake install DESTDIR=_dest
-        working-directory: openssl\_build
+          cmake -Dliboqs_DIR="$(pwd)\.local" ${{ matrix.platform.oqsconfig }} -S . -B _build
+          cmake --build _build --parallel
+      - name: Run tests
+        run: |
+          ctest --test-dir _build
 
