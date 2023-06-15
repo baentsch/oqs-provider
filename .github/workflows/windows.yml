@@ -44,11 +44,9 @@ jobs:
       - name: Output PWD (bash)
         run: bash -c "echo 'PWD = $(pwd)' && ls && echo 'PATH=$PATH'"
       - name: convert PWD (bash)
-        run: bash -c "$(cygpath -u '$PWD')"
+        run: bash -c "echo $(cygpath -u '$PWD')"
       - name: output path (win style)
         run: echo "PATH=%PATH%"
-      - name: output githubpath
-        run: echo "GITHUB_PATH=$GITHUB_PATH"
       - name: check bash
         run: which bash
 # PATH= empty ?????
@@ -81,7 +79,7 @@ jobs:
         platform:
           - arch: win64
             oqsconfig: -DOQS_ALGS_ENABLED=STD
-            config: no-shared no-fips VC-WIN64A-masm
+            osslconfig: no-shared no-fips VC-WIN64A-masm
 #          - arch: win32
 #            config: --strict-warnings no-fips enable-quic
     runs-on: ${{matrix.os}}
@@ -123,7 +121,7 @@ jobs:
       - name: build liboqs
         run: |
           cmake --version
-          cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_INSTALL_PREFIX="$(pwd)\..\.local" ${{ matrix.platform.oqsconfig }} -S . -B _build
+          cmake -DCMAKE_C_FLAGS="/wd5105" -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_INSTALL_PREFIX="c:\liboqs" ${{ matrix.platform.oqsconfig }} -S . -B _build
           cd _build && msbuild ALL_BUILD.vcxproj -p:Configuration=Release && cd ..
           cmake --install _build
         working-directory: liboqs
@@ -133,7 +131,7 @@ jobs:
 #      - name: config
 #        working-directory: openssl\_build
 #        run: |
-#          perl ..\Configure --banner=Configured no-makedepend ${{ matrix.platform.config }}
+#          perl ..\Configure --banner=Configured no-makedepend ${{ matrix.platform.osslconfig }}
 #          perl configdata.pm --dump
 #      - name: build
 #        working-directory: openssl\_build
