@@ -62,7 +62,7 @@ jobs:
            gcc --version
            mkdir _build
            cd _build
-           cmake --debug-output -GNinja -DCMAKE_INSTALL_PREFIX=$(cygpath -u '$PWD')/../.local ${{ matrix.platform.oqsconfig }} -DCMAKE_C_COMPILER=gcc ..
+           cmake --debug-output -GNinja -DCMAKE_INSTALL_PREFIX=$(cygpath -u $PWD)/../.local ${{ matrix.platform.oqsconfig }} -DCMAKE_C_COMPILER=gcc ..
            ninja
            ninja install
         working-directory: liboqs
@@ -145,7 +145,7 @@ jobs:
         if: steps.cache-openssl32.outputs.cache-hit != 'true'
         working-directory: openssl\_build
         run: |
-          perl ..\Configure --banner=Configured no-makedepend ${{ matrix.platform.osslconfig }}
+          perl ..\Configure --banner=Configured --prefix=. no-makedepend ${{ matrix.platform.osslconfig }}
           perl configdata.pm --dump
       - name: OpenSSL build
         if: steps.cache-openssl32.outputs.cache-hit != 'true'
