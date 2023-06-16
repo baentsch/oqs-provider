@@ -53,15 +53,18 @@ jobs:
 # OQS_USE_OPENSSL=OFF by default on Win32
       - name: build liboqs
 # fails:        run: bash -o igncr -c "cmake -GNinja -DCMAKE_INSTALL_PREFIX=$(cygpath -u '$PWD')/../.local ${{ matrix.platform.oqsconfig }} -DCMAKE_C_COMPILER=gcc -S $(cygpath -u '$PWD') -B $(cygpath -u '$PWD')/_build && cmake --build _build --parallel && cmake --install _build"
+# also fails: cmake --debug-output -GNinja -DCMAKE_INSTALL_PREFIX=$(cygpath -u '$PWD')/../.local -DOQS_ALGS_ENABLED=STD -DCMAKE_C_COMPILER=gcc -S $(cygpath -u '$PWD') -B _build
         run: |
            which cmake
            cmake --version
            echo "pwd=$(pwd)"
            echo "pwd=$(cygpath -u '$PWD')"
            gcc --version
-           cmake --debug-output -GNinja -DCMAKE_INSTALL_PREFIX=$(cygpath -u '$PWD')/../.local ${{ matrix.platform.oqsconfig }} -DCMAKE_C_COMPILER=gcc -S $(cygpath -u '$PWD') -B _build
-           cmake --debug-output --build _build 
-           cmake --install _build
+           mkdir _build
+           cd _build
+           cmake --debug-output -GNinja -DCMAKE_INSTALL_PREFIX=$(cygpath -u '$PWD')/../.local ${{ matrix.platform.oqsconfig }} -DCMAKE_C_COMPILER=gcc ..
+           ninja
+           ninja install
         working-directory: liboqs
       - name: build openssl3
         run: bash -o igncr -c "ls && ./config --prefix=$(echo $(cygpath -u '$PWD')/../.local) && make -j 4 && make install_sw"
@@ -85,8 +88,16 @@ jobs:
 #            config: --strict-warnings no-fips enable-quic
     runs-on: ${{matrix.os}}
     steps:
+      - name: Cache OpenSSL32
+        id: cache-openssl32
+        uses: actions/cache@v3
+        with:
+          path: c:\openssl32
+          key: ${{ runner.os }}-openssl32
       - uses: actions/checkout@v3
-      - uses: actions/checkout@v3
+      - name: Checkout OpenSSL master
+        if: steps.cache-openssl32.outputs.cache-hit != 'true'
+        uses: actions/checkout@v3
         with:
           set-safe-directory: true
           repository: openssl/openssl
@@ -99,10 +110,14 @@ jobs:
       - uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: ${{ matrix.platform.arch }}
-      - uses: ilammy/setup-nasm@v1
+      - name: Setup nasm for OpenSSL build
+        uses: ilammy/setup-nasm@v1
+        if: steps.cache-openssl32.outputs.cache-hit != 'true'
         with:
           platform: ${{ matrix.platform.arch }}
-      - uses: shogo82148/actions-setup-perl@v1
+      - name: Setup perl for OpenSSl build
+        uses: shogo82148/actions-setup-perl@v1
+        if: steps.cache-openssl32.outputs.cache-hit != 'true'
       - name: Control setup
         run: |
           dir
@@ -122,31 +137,42 @@ jobs:
           ninja
           ninja install
         working-directory: liboqs
-      - name: prepare the openssl build directory
+      - name: prepare the OpenSSL build directory
+        if: steps.cache-openssl32.outputs.cache-hit != 'true'
         run: mkdir _build
         working-directory: openssl
-      - name: config
+      - name: OpenSSL config
+        if: steps.cache-openssl32.outputs.cache-hit != 'true'
         working-directory: openssl\_build
         run: |
-          perl ..\Configure --banner=Configured no-makedepend --prefix=c:\openssl32 ${{ matrix.platform.osslconfig }}
+          perl ..\Configure --banner=Configured no-makedepend ${{ matrix.platform.osslconfig }}
           perl configdata.pm --dump
-      - name: build
+      - name: OpenSSL build
+        if: steps.cache-openssl32.outputs.cache-hit != 'true'
         working-directory: openssl\_build
         run: nmake /S
 # Skip testing openssl for now
 #      - name: test
 #        working-directory: openssl\_build
 #        run: nmake test VERBOSE_FAILURE=yes TESTS=-test_fuzz* HARNESS_JOBS=4
-      - name: install
+      - name: OpenSSL install
         # Run on 64 bit only as 32 bit is slow enough already
-        if: $${{ matrix.platform.arch == 'win64' }}
+        if: steps.cache-openssl32.outputs.cache-hit != 'true'
         run: |
           mkdir c:\openssl32
           nmake install_sw DESTDIR=c:\openssl32
         working-directory: openssl\_build
+      - name: Save OpenSSL
+        id: cache-openssl-save
+        if: steps.cache-openssl32.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v3
+        with:
+          path: |
+            c:\openssl32
+          key: ${{ runner.os }}-openssl32
       - name: build oqs-provider
         run: |
-          cmake -DOPENSSL_ROOT_DIR=c:\openssl32 -Dliboqs_DIR="$(pwd)\.local" ${{ matrix.platform.oqsconfig }} -S . -B _build
+          cmake -DOPENSSL_ROOT_DIR=c:\openssl32 -Dliboqs_DIR="c:\liboqs" ${{ matrix.platform.oqsconfig }} -S . -B _build
           cmake --build _build --parallel
       - name: Run tests
         run: |
