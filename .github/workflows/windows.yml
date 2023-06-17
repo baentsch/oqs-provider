@@ -39,15 +39,14 @@ jobs:
           path: liboqs
       - name: Install cygwin
         uses: cygwin/cygwin-install-action@master
-        shell: bash
         with:
           packages: perl git ninja gcc-core cmake
       - name: Output PWD
         shell: bash
         run: echo "PWD = $(pwd)" && ls && echo "PATH=$PATH"
-      - name: Output PWD and HOME
+      - name: Output PWD and HOME and $PATH
         shell: bash
-        run: echo "PWD = $PWD" && echo "HOME=$HOME"
+        run: echo "PWD = $PWD" && echo "HOME=$HOME" && echo "PATH=$PATH"
       - name: Output PWD (bash)
         shell: bash
         run: bash -c "echo 'PWD = $(pwd)' && ls && echo 'PATH=$PATH'"
@@ -67,6 +66,7 @@ jobs:
 # also fails: cmake --debug-output -GNinja -DCMAKE_INSTALL_PREFIX=$(cygpath -u '$PWD')/../.local -DOQS_ALGS_ENABLED=STD -DCMAKE_C_COMPILER=gcc -S $(cygpath -u '$PWD') -B _build
         shell: bash
         run: |
+           echo $PATH
            which cmake
            cmake --version
            echo "pwd=$(pwd)"
