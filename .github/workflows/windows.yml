@@ -24,17 +24,14 @@ jobs:
     steps:
       - name: Checkout provider
         uses: actions/checkout@v3
-        shell: bash
       - name: Checkout openssl
         uses: actions/checkout@v3
-        shell: bash
         with:
           set-safe-directory: true
           repository: openssl/openssl
           path: openssl
       - name: checkout liboqs
         uses: actions/checkout@v3
-        shell: bash
         with:
           set-safe-directory: true
           repository: open-quantum-safe/liboqs
