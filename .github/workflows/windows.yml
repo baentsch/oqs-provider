@@ -23,31 +23,41 @@ jobs:
     runs-on: ${{matrix.os}}
     steps:
       - uses: actions/checkout@v3
+        shell: bash
       - uses: actions/checkout@v3
+        shell: bash
         with:
           set-safe-directory: true
           repository: openssl/openssl
           path: openssl
       - uses: actions/checkout@v3
+        shell: bash
         with:
           set-safe-directory: true
           repository: open-quantum-safe/liboqs
           ref: main
           path: liboqs
       - uses: cygwin/cygwin-install-action@master
+        shell: bash
         with:
           packages: perl git ninja gcc-core cmake
       - name: Output PWD
+        shell: bash
         run: echo "PWD = $(pwd)" && ls && echo "PATH=$PATH"
       - name: Output PWD and HOME
+        shell: bash
         run: echo "PWD = $PWD" && echo "HOME=$HOME"
       - name: Output PWD (bash)
+        shell: bash
         run: bash -c "echo 'PWD = $(pwd)' && ls && echo 'PATH=$PATH'"
       - name: convert PWD (bash)
+        shell: bash
         run: bash -c "echo $(cygpath -u '$PWD')"
       - name: output path (win style)
+        shell: bash
         run: echo "PATH=%PATH%"
       - name: check bash
+        shell: bash
         run: which bash
 # PATH= empty ?????
 # OQS_USE_OPENSSL=OFF by default on Win32
@@ -169,7 +179,6 @@ jobs:
         run: |
           mkdir c:\openssl32
           nmake install_sw
-          nmake /N install_ssldirs
         working-directory: openssl\_build
       - name: Save OpenSSL
         id: cache-openssl-save
@@ -181,7 +190,7 @@ jobs:
           key: ${{ runner.os }}-openssl32
       - name: build oqs-provider
         run: |
-          cmake -DOPENSSL_ROOT_DIR=c:\openssl32 -Dliboqs_DIR="c:\liboqs" ${{ matrix.platform.oqsconfig }} -S . -B _build
+          cmake -DOPENSSL_ROOT_DIR="c:\openssl32" -Dliboqs_DIR="c:\liboqs\lib\cmake\liboqs" ${{ matrix.platform.oqsconfig }} -S . -B _build
           cmake --build _build --parallel
       - name: Run tests
         run: |
