@@ -48,7 +48,7 @@ add_test(
     NAME oqs_tlssig
     COMMAND oqs_test_tlssig
             "oqsprovider"
-            "${CMAKE_CURRENT_SOURCE_DIR}/oqs.cnf"
+            "${CMAKE_CURRENT_SOURCE_DIR}/openssl-ca.cnf"
             "${CMAKE_CURRENT_BINARY_DIR}/tmp"
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 )
@@ -65,7 +65,7 @@ add_test(
   NAME oqs_endecode
   COMMAND oqs_test_endecode
           "oqsprovider"
-          "${CMAKE_CURRENT_SOURCE_DIR}/oqs.cnf"
+          "${CMAKE_CURRENT_SOURCE_DIR}/openssl-ca.cnf"
 )
 set_tests_properties(oqs_endecode
   PROPERTIES ENVIRONMENT "OPENSSL_MODULES=${OQS_PROV_BINARY_DIR}"
