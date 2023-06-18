@@ -76,6 +76,15 @@ jobs:
            echo $PATH
            which cmake
            cmake --version
+      - name: test setting env var
+        run: echo "MoinVar=Moin" >> "$GITHUB_ENV"
+      - name: Check env vars
+        run: env
+      - name: Check MoinVar
+        run: |
+           echo "MoinVar: $MoinVar"
+           echo "MoinVar2: ${{ env.MoinVar }}"
+           echo "Complete env: ${{ env }}"
       - name: build liboqs
         run: |
            echo $PATH
@@ -217,5 +226,5 @@ jobs:
           ninja
       - name: Run tests
         run: |
-          ctest --test-dir _build
+          ctest -V --test-dir _build
 
