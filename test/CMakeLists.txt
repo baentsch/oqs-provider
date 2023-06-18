@@ -10,7 +10,6 @@ set_tests_properties(oqs_signatures
 )
 
 add_executable(oqs_test_signatures oqs_test_signatures.c test_common.c)
-target_include_directories(oqs_test_signatures PRIVATE ${CMAKE_SOURCE_DIR}/.local/include)
 target_link_libraries(oqs_test_signatures ${OPENSSL_CRYPTO_LIBRARY})
 
 add_test(
@@ -24,7 +23,6 @@ set_tests_properties(oqs_kems
 )
 
 add_executable(oqs_test_kems oqs_test_kems.c test_common.c)
-target_include_directories(oqs_test_kems PRIVATE ${CMAKE_SOURCE_DIR}/.local/include)
 target_link_libraries(oqs_test_kems ${OPENSSL_CRYPTO_LIBRARY})
 
 add_test(
@@ -57,7 +55,6 @@ target_link_libraries(oqs_test_tlssig ${OPENSSL_SSL_LIBRARY} ${OPENSSL_CRYPTO_LI
 
 add_executable(oqs_test_endecode oqs_test_endecode.c test_common.c)
 target_link_libraries(oqs_test_endecode ${OPENSSL_CRYPTO_LIBRARY})
-target_include_directories(oqs_test_endecode PRIVATE ${CMAKE_SOURCE_DIR}/.local/include)
 add_test(
   NAME oqs_endecode
   COMMAND oqs_test_endecode
