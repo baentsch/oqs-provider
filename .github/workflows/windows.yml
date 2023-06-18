@@ -76,6 +76,14 @@ jobs:
            echo $PATH
            which cmake
            cmake --version
+      - name: Set the value
+        id: step_one
+        run: |
+          echo "action_state=yellow" >> "$GITHUB_ENV"
+      - name: Use the value
+        id: step_two
+        run: |
+          echo "${{ env.action_state }}" # This will output 'yellow'
       - name: test setting env var
         run: echo "MoinVar=Moin" >> "$GITHUB_ENV"
       - name: Check env vars
@@ -85,6 +93,8 @@ jobs:
            echo "MoinVar: $MoinVar"
            echo "MoinVar2: ${{ env.MoinVar }}"
            echo "Complete env: ${{ env }}"
+      - name: cat env
+        run: cat $MoinVar
       - name: build liboqs
         run: |
            echo $PATH

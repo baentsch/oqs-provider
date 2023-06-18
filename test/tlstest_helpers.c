@@ -35,8 +35,10 @@ int create_cert_key(OSSL_LIB_CTX *libctx, char *algname, char *certfilename, cha
         || !(keybio = BIO_new_file(privkeyfilename, "wb"))
         || !PEM_write_bio_PrivateKey(keybio, pkey, NULL, NULL, 0, NULL, NULL)
         || !(certbio = BIO_new_file(certfilename, "wb"))
-        || !PEM_write_bio_X509(certbio, x509))
+        || !PEM_write_bio_X509(certbio, x509)) {
+        printf("Failed to write %s and/or %s\n", privkeyfilename, certfilename);
         ret = 0;
+    }
 
     EVP_PKEY_free(pkey);
     X509_free(x509);

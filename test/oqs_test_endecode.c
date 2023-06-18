@@ -180,7 +180,7 @@ static int test_oqs_encdec(const char *sigalg_name) {
         if (!encode_EVP_PKEY_prov(pkey, test_params_list[i].format, test_params_list[i].structure,
                                   test_params_list[i].pass, test_params_list[i].selection,
                                   &encoded, &encoded_len)) {
-            printf("Failed encoding %s", sigalg_name);
+            printf("Failed encoding %s at param %d\n", sigalg_name, i);
             goto end;
         }
         if (!decode_EVP_PKEY_prov(test_params_list[i].format, test_params_list[i].structure,
