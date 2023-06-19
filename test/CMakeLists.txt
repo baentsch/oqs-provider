@@ -11,9 +11,17 @@ add_test(
           "oqsprovider"
           "${CMAKE_SOURCE_DIR}/test/oqs.cnf"
 )
-set_tests_properties(oqs_signatures
-  PROPERTIES ENVIRONMENT "OPENSSL_MODULES=${OQS_PROV_BINARY_DIR}"
+# openssl under MSVC seems to have a bug registering NIDs:
+# It only works when setting OPENSSL_CONF, not when loading the same cnf file:
+if (MSVC)
+set_tests_properties(oqs_tlssig
+    PROPERTIES ENVIRONMENT "OPENSSL_MODULES=${OQS_PROV_BINARY_DIR};OPENSSL_CONF=${CMAKE_CURRENT_SOURCE_DIR}/openssl-ca.cnf"
 )
+else()
+set_tests_properties(oqs_tlssig
+    PROPERTIES ENVIRONMENT "OPENSSL_MODULES=${OQS_PROV_BINARY_DIR}"
+)
+endif()
 
 add_executable(oqs_test_signatures oqs_test_signatures.c test_common.c)
 target_link_libraries(oqs_test_signatures ${OPENSSL_CRYPTO_LIBRARY} ${OQS_ADDL_SOCKET_LIBS})
@@ -24,9 +32,17 @@ add_test(
           "oqsprovider"
           "${CMAKE_SOURCE_DIR}/test/oqs.cnf"
 )
-set_tests_properties(oqs_kems
-  PROPERTIES ENVIRONMENT "OPENSSL_MODULES=${OQS_PROV_BINARY_DIR}"
+# openssl under MSVC seems to have a bug registering NIDs:
+# It only works when setting OPENSSL_CONF, not when loading the same cnf file:
+if (MSVC)
+set_tests_properties(oqs_tlssig
+    PROPERTIES ENVIRONMENT "OPENSSL_MODULES=${OQS_PROV_BINARY_DIR};OPENSSL_CONF=${CMAKE_CURRENT_SOURCE_DIR}/openssl-ca.cnf"
 )
+else()
+set_tests_properties(oqs_tlssig
+    PROPERTIES ENVIRONMENT "OPENSSL_MODULES=${OQS_PROV_BINARY_DIR}"
+)
+endif()
 
 add_executable(oqs_test_kems oqs_test_kems.c test_common.c)
 target_link_libraries(oqs_test_kems ${OPENSSL_CRYPTO_LIBRARY} ${OQS_ADDL_SOCKET_LIBS})
@@ -38,9 +54,17 @@ add_test(
             "${CMAKE_CURRENT_SOURCE_DIR}/oqs.cnf"
             "${CMAKE_CURRENT_SOURCE_DIR}"
 )
-set_tests_properties(oqs_groups
+# openssl under MSVC seems to have a bug registering NIDs:
+# It only works when setting OPENSSL_CONF, not when loading the same cnf file:
+if (MSVC)
+set_tests_properties(oqs_tlssig
+    PROPERTIES ENVIRONMENT "OPENSSL_MODULES=${OQS_PROV_BINARY_DIR};OPENSSL_CONF=${CMAKE_CURRENT_SOURCE_DIR}/openssl-ca.cnf"
+)
+else()
+set_tests_properties(oqs_tlssig
     PROPERTIES ENVIRONMENT "OPENSSL_MODULES=${OQS_PROV_BINARY_DIR}"
 )
+endif()
 add_executable(oqs_test_groups oqs_test_groups.c test_common.c tlstest_helpers.c)
 target_link_libraries(oqs_test_groups ${OPENSSL_SSL_LIBRARY} ${OPENSSL_CRYPTO_LIBRARY} ${OQS_ADDL_SOCKET_LIBS})
 
