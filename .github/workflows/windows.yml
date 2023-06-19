@@ -86,16 +86,10 @@ jobs:
            ninja install
         working-directory: liboqs
       - name: build openssl3
-        run: |
-           ./config --prefix="${{ env.IP }}"
-           make -j 4
-           make install_sw
+        run: bash -c "./config --prefix='${{ env.IP }}' && make -j 4 && make install_sw"
         working-directory: openssl
       - name: build oqs-provider
-        run: |
-           liboqs_DIR=.local cmake -GNinja -DCMAKE_C_COMPILER=gcc -DOPENSSL_ROOT_DIR="${{ env.IP }}" -S . -B _build
-           cd _build
-           ninja
+        run: bash -c "liboqs_DIR=.local cmake -GNinja -DCMAKE_C_COMPILER=gcc -DOPENSSL_ROOT_DIR='${{ env.IP }}' -S . -B _build && cd _build && ninja"
       - name: Run tests
         run: ctest --test-dir _build
 
