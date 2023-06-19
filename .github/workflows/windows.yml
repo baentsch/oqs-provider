@@ -84,6 +84,16 @@ jobs:
         id: step_two
         run: |
           echo "${{ env.action_state }}" # This will output 'yellow'
+      - name: Set the value
+        shell: bash
+        id: step_one
+        run: |
+          echo "action_state=yellow" >> "$GITHUB_ENV"
+      - name: Use the value
+        shell: bash
+        id: step_two
+        run: |
+          echo "${{ env.action_state }}" # This will output 'yellow'
       - name: test setting env var
         run: echo "MoinVar=Moin" >> "$GITHUB_ENV"
       - name: Check env vars
