@@ -84,7 +84,7 @@ jobs:
         run: |
            echo "MoinVar: $env:MoinVar"
            echo "MoinVar2: ${{ env.MoinVar }}"
-           echo "Complete env: ${{ env }}"
+           echo "MoinVar3: $MoinVar"
       - name: Determine installpath
         run: |
            echo "IP=$(cygpath -u $PWD)/.local" >> "$env:GITHUB_ENV"
@@ -98,16 +98,18 @@ jobs:
            gcc --version
            mkdir _build
            cd _build
-           echo "${{ env.IP }}"
-           echo "Installing liboqs to $env.IP"
-           cmake --debug-output -GNinja -DCMAKE_INSTALL_PREFIX=${{ env.IP }} ${{ matrix.platform.oqsconfig }} -DCMAKE_C_COMPILER=gcc ..
+           echo "Inst: ${{ env:IP }}"
+           echo "Install to ? ${{ env.IP }}"
+           echo "Installing liboqs to $env:IP"
+           cmake --debug-output -GNinja -DCMAKE_INSTALL_PREFIX=$env:IP ${{ matrix.platform.oqsconfig }} -DCMAKE_C_COMPILER=gcc ..
            ninja
            ninja install
         working-directory: liboqs
       - name: build openssl3
         run: |
            echo "Installing OpenSSL to ${{ env.IP }}"
-           bash -o igncr -c "ls && ./config --prefix=${{ env.IP }} && make -j 4 && make install_sw"
+           echo "or to $IP"
+           bash -o igncr -c "ls && ./config --prefix=$IP && make -j 4 && make install_sw"
         working-directory: openssl
       - name: build oqs-provider
         run: bash -o igncr -c "liboqs_DIR=.local cmake -GNinja -DCMAKE_C_COMPILER=gcc -DOPENSSL_ROOT_DIR=${{ env.IP }} -S . -B _build && ninja "
