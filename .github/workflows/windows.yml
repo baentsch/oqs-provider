@@ -71,20 +71,6 @@ jobs:
 # OQS_USE_OPENSSL=OFF by default on Win32
 # fails:        run: bash -o igncr -c "cmake -GNinja -DCMAKE_INSTALL_PREFIX=$(cygpath -u '$PWD')/../.local ${{ matrix.platform.oqsconfig }} -DCMAKE_C_COMPILER=gcc -S $(cygpath -u '$PWD') -B $(cygpath -u '$PWD')/_build && cmake --build _build --parallel && cmake --install _build"
 # also fails: cmake --debug-output -GNinja -DCMAKE_INSTALL_PREFIX=$(cygpath -u '$PWD')/../.local -DOQS_ALGS_ENABLED=STD -DCMAKE_C_COMPILER=gcc -S $(cygpath -u '$PWD') -B _build
-      - name: test setup for build liboqs without shell
-        run: |
-           echo $PATH
-           which cmake
-           cmake --version
-      - name: test setting env var
-        run: echo "MoinVar=Moin" >> "$env:GITHUB_ENV"
-      - name: Check env vars
-        run: env
-      - name: Check MoinVar
-        run: |
-           echo "MoinVar: $env:MoinVar"
-           echo "MoinVar2: ${{ env.MoinVar }}"
-           echo "MoinVar3: $MoinVar"
       - name: Determine installpath
         run: |
            echo "IP=$(cygpath -u $PWD)/.local" >> "$env:GITHUB_ENV"
@@ -98,17 +84,15 @@ jobs:
            gcc --version
            mkdir _build
            cd _build
-           echo "Install to ? ${{ env.IP }}"
-           echo "Installing liboqs to $IP"
-           cmake --debug-output -GNinja -DCMAKE_INSTALL_PREFIX=$IP ${{ matrix.platform.oqsconfig }} -DCMAKE_C_COMPILER=gcc ..
+           echo "Install liboqs to ${{ env.IP }}"
+           cmake --debug-output -GNinja -DCMAKE_INSTALL_PREFIX=${{ env.IP }} ${{ matrix.platform.oqsconfig }} -DCMAKE_C_COMPILER=gcc ..
            ninja
            ninja install
         working-directory: liboqs
       - name: build openssl3
         run: |
            echo "Installing OpenSSL to ${{ env.IP }}"
-           echo "or to $IP"
-           bash -o igncr -c "ls && ./config --prefix=$IP && make -j 4 && make install_sw"
+           bash -o igncr -c "ls && ./config --prefix=${{ env.IP }} && make -j 4 && make install_sw"
         working-directory: openssl
       - name: build oqs-provider
         run: bash -o igncr -c "liboqs_DIR=.local cmake -GNinja -DCMAKE_C_COMPILER=gcc -DOPENSSL_ROOT_DIR=${{ env.IP }} -S . -B _build && ninja "
