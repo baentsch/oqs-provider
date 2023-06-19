@@ -21,6 +21,11 @@ jobs:
 #          - arch: win32
 #            config: --strict-warnings no-fips enable-quic
     runs-on: ${{matrix.os}}
+    env:
+      CYGWIN_NOWINPATH: 1
+      SHELLOPTS: igncr
+# Don't overwhelm github CI VMs:
+      MAKE_PARAMS: -j 4
     steps:
       - name: Show /usr/bin
         shell: bash
@@ -86,7 +91,7 @@ jobs:
            ninja install
         working-directory: liboqs
       - name: build openssl3
-        run: bash -c "./config --prefix='${{ env.IP }}' && make -j 4 && make install_sw"
+        run: bash -c "gcc --version && ./config ${{ matrix.platform.config }} && make $MAKE_PARAMS"
         working-directory: openssl
       - name: build oqs-provider
         run: bash -c "liboqs_DIR=.local cmake -GNinja -DCMAKE_C_COMPILER=gcc -DOPENSSL_ROOT_DIR='${{ env.IP }}' -S . -B _build && cd _build && ninja"
