@@ -100,8 +100,8 @@ jobs:
            cd _build
            echo "Inst: ${{ env:IP }}"
            echo "Install to ? ${{ env.IP }}"
-           echo "Installing liboqs to $env:IP"
-           cmake --debug-output -GNinja -DCMAKE_INSTALL_PREFIX=$env:IP ${{ matrix.platform.oqsconfig }} -DCMAKE_C_COMPILER=gcc ..
+           echo "Installing liboqs to $IP"
+           cmake --debug-output -GNinja -DCMAKE_INSTALL_PREFIX=$IP ${{ matrix.platform.oqsconfig }} -DCMAKE_C_COMPILER=gcc ..
            ninja
            ninja install
         working-directory: liboqs
