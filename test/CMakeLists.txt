@@ -52,15 +52,17 @@ add_test(
             "${CMAKE_CURRENT_BINARY_DIR}/tmp"
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 )
-set_tests_properties(oqs_tlssig
 # openssl under MSVC seems to have a bug registering NIDs:
 # It only works when setting OPENSSL_CONF, not when loading the same cnf file:
 if (MSVC)
+set_tests_properties(oqs_tlssig
     PROPERTIES ENVIRONMENT "OPENSSL_MODULES=${OQS_PROV_BINARY_DIR};OPENSSL_CONF=${CMAKE_CURRENT_SOURCE_DIR}/openssl-ca.cnf"
-else()
-    PROPERTIES ENVIRONMENT "OPENSSL_MODULES=${OQS_PROV_BINARY_DIR}"
-endif()
 )
+else()
+set_tests_properties(oqs_tlssig
+    PROPERTIES ENVIRONMENT "OPENSSL_MODULES=${OQS_PROV_BINARY_DIR}"
+)
+endif()
 add_executable(oqs_test_tlssig oqs_test_tlssig.c test_common.c tlstest_helpers.c)
 target_link_libraries(oqs_test_tlssig ${OPENSSL_SSL_LIBRARY} ${OPENSSL_CRYPTO_LIBRARY} ${OQS_ADDL_SOCKET_LIBS})
 
@@ -72,13 +74,14 @@ add_test(
           "oqsprovider"
           "${CMAKE_CURRENT_SOURCE_DIR}/openssl-ca.cnf"
 )
-set_tests_properties(oqs_endecode
 # openssl under MSVC seems to have a bug registering NIDs:
 # It only works when setting OPENSSL_CONF, not when loading the same cnf file:
 if (MSVC)
+set_tests_properties(oqs_endecode
     PROPERTIES ENVIRONMENT "OPENSSL_MODULES=${OQS_PROV_BINARY_DIR};OPENSSL_CONF=${CMAKE_CURRENT_SOURCE_DIR}/openssl-ca.cnf"
-else()
-    PROPERTIES ENVIRONMENT "OPENSSL_MODULES=${OQS_PROV_BINARY_DIR}"
-endif()
 )
-
+else()
+set_tests_properties(oqs_endecode
+    PROPERTIES ENVIRONMENT "OPENSSL_MODULES=${OQS_PROV_BINARY_DIR}"
+)
+endif()
