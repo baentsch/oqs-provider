@@ -18,7 +18,7 @@ jobs:
       - name: Use the value
         id: step_two
         run: |
-          echo "$env.action_state" # This will output 'yellow'
+          echo "$ {{ env.action_state }}" # This will output 'yellow'
       - name: Set color
         id: random-color-generator
         run: echo "SELECTED_COLOR=green" >> "$GITHUB_OUTPUT"
@@ -42,7 +42,7 @@ jobs:
       - name: Use the value
         id: step_two
         run: |
-          echo "$env:action_state" # This will output 'yellow'
+          echo "${{ env:action_state }}" # This will output 'yellow'
       - name: Set color
         id: random-color-generator
         run: echo "SELECTED_COLOR=green" >> "$env:GITHUB_OUTPUT"
