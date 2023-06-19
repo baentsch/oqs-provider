@@ -601,8 +601,13 @@ int OSSL_provider_init(const OSSL_CORE_HANDLE *handle,
               return 0;
         }
 
-        OQS_PROV_PRINTF3("OQS PROV: successfully registered %s with NID %d\n", oqs_oid_alg_list[i+1], OBJ_sn2nid(oqs_oid_alg_list[i+1]));
-
+        if (OBJ_sn2nid(oqs_oid_alg_list[i+1]) != 0)
+            OQS_PROV_PRINTF3("OQS PROV: successfully registered %s with NID %d\n", oqs_oid_alg_list[i+1], OBJ_sn2nid(oqs_oid_alg_list[i+1]));
+        else {
+            OQS_PROV_PRINTF2("OQS PROV: Impossible error: NID unregistered for %s.\n", oqs_oid_alg_list[i+1]);
+            return 0;
+        }
+            
     }
 
     // if libctx not yet existing, create a new one

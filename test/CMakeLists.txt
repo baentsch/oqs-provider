@@ -54,7 +54,7 @@ add_test(
 )
 set_tests_properties(oqs_tlssig
     # Some algorithms known to overflow OpenSSL limits; TBD/resolved upstream
-    PROPERTIES ENVIRONMENT "OPENSSL_MODULES=${OQS_PROV_BINARY_DIR};OQS_SKIP_TESTS=picnicl1full,rainbowVclassic,sphincs"
+    PROPERTIES ENVIRONMENT "OPENSSL_MODULES=${OQS_PROV_BINARY_DIR};OQS_SKIP_TESTS=picnicl1full,rainbowVclassic,sphincs;OPENSSL_CONF=${CMAKE_CURRENT_SOURCE_DIR}/openssl-ca.cnf"
 )
 add_executable(oqs_test_tlssig oqs_test_tlssig.c test_common.c tlstest_helpers.c)
 target_link_libraries(oqs_test_tlssig ${OPENSSL_SSL_LIBRARY} ${OPENSSL_CRYPTO_LIBRARY} ${OQS_ADDL_SOCKET_LIBS})
