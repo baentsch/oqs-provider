@@ -98,7 +98,6 @@ jobs:
            gcc --version
            mkdir _build
            cd _build
-           echo "Inst: ${{ env:IP }}"
            echo "Install to ? ${{ env.IP }}"
            echo "Installing liboqs to $IP"
            cmake --debug-output -GNinja -DCMAKE_INSTALL_PREFIX=$IP ${{ matrix.platform.oqsconfig }} -DCMAKE_C_COMPILER=gcc ..
