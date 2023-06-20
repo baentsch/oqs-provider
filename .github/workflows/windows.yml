@@ -48,7 +48,7 @@ jobs:
       - name: Install cygwin
         uses: cygwin/cygwin-install-action@master
         with:
-          packages: perl git ninja gcc-core cmake
+          packages: perl git ninja gcc-core cmake make
       - name: Show /usr/bin
         shell: bash
         run: ls /usr/bin
@@ -91,7 +91,7 @@ jobs:
            ninja install
         working-directory: liboqs
       - name: build openssl3
-        run: bash -c "gcc --version && ./config --prefix='${{ env.IP }}' ${{ matrix.platform.config }} && perl configdata.pm --dump && ls -laR && make $MAKE_PARAMS"
+        run: /usr/bin/bash -c "which make && echo $PATH && make --version && gcc --version && ./config --prefix='${{ env.IP }}' ${{ matrix.platform.config }} && perl configdata.pm --dump && ls -laR && make $MAKE_PARAMS"
         working-directory: openssl
       - name: build oqs-provider
         run: bash -c "liboqs_DIR=.local cmake -GNinja -DCMAKE_C_COMPILER=gcc -DOPENSSL_ROOT_DIR='${{ env.IP }}' -S . -B _build && cd _build && ninja"
