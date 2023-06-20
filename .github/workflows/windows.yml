@@ -96,8 +96,12 @@ jobs:
         run: openssl version
       - name: Check Openssl (2)
         run: bash -c "openssl version"
+      - name: Check Openssl (3)
+        run: bash -c "/opt/openssl32/bin/openssl version"
+      - name: Check Openssl providers
+        run: bash -c "OPENSSL_MODULES=_build/bin /opt/openssl32/bin/openssl list -providers -provider oqsprovider -provider default"
       - name: Run tests
-        run: bash -c "echo $PATH && ctest -V"
+        run: bash -c "echo $PATH && PATH=/opt/openssl32/bin:/usr/bin ctest -V"
         working-directory: _build
       - name: Retain oqsprovider.dll
         uses: actions/upload-artifact@v3
