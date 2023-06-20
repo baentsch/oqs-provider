@@ -89,6 +89,9 @@ jobs:
       - name: Show _build dir
         run: bash -c "ls -laR _build"
 # fails:        run: ctest --test-dir _build
+      - name: Adapt oqsprovider.dll name
+        run: bash -c "cp oqsprovider-1.dll oqsprovider.dll"
+        working-directory: _build/bin
       - name: Run tests
         run: |
            ctest -V

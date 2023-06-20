@@ -1,5 +1,5 @@
 include(GNUInstallDirs)
-if (WIN32)
+if (WIN32 OR CYGWIN)
 set(OQS_PROV_BINARY_DIR ${CMAKE_BINARY_DIR}/bin)
 else()
 set(OQS_PROV_BINARY_DIR ${CMAKE_BINARY_DIR}/lib)

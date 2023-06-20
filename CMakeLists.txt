@@ -42,11 +42,11 @@ include(CheckFunctionExists)
 find_package(OpenSSL 3.0 REQUIRED)
 include_directories(${OPENSSL_INCLUDE_DIR})
 find_package(liboqs REQUIRED)
-#if (WIN32)
+if (WIN32 OR CYGWIN)
 get_target_property(LIBOQS_INCLUDE_DIR OQS::oqs INTERFACE_INCLUDE_DIRECTORIES)
 message(STATUS "liboqs found: Include dir at ${LIBOQS_INCLUDE_DIR}")
 include_directories(${LIBOQS_INCLUDE_DIR})
-#endif()
+endif()
 # Provider module
 add_subdirectory(oqsprov)
 
