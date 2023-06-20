@@ -86,8 +86,13 @@ jobs:
           key: ${{ runner.os }}-cygwinopenssl32
       - name: build oqs-provider
         run: bash -c "git config --global --add safe.directory $(cygpath -u $PWD) && liboqs_DIR='${{ env.IP }}' cmake -GNinja -DCMAKE_C_COMPILER=gcc -DOPENSSL_ROOT_DIR=/opt/openssl32 -S . -B _build && cd _build && ninja && cd .."
+      - name: Show _build dir
+        run: bash -c "ls -laR _build"
+# fails:        run: ctest --test-dir _build
       - name: Run tests
-        run: ctest --test-dir _build
+        run: |
+           ctest -V
+        working-directory: _build
 
   msvc:
 # Run a job for each of the specified target architectures:
