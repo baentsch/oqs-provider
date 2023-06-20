@@ -90,14 +90,6 @@ jobs:
       - name: Adapt oqsprovider.dll name
         run: bash -c "cp oqsprovider-1.dll oqsprovider.dll"
         working-directory: _build/bin
-      - name: Check env
-        run: env
-      - name: Check Openssl
-        run: openssl version
-      - name: Check Openssl (2)
-        run: bash -c "openssl version"
-      - name: Check Openssl (3)
-        run: bash -c "/opt/openssl32/bin/openssl version"
       - name: Check Openssl providers
         run: bash -c "OPENSSL_MODULES=_build/bin /opt/openssl32/bin/openssl list -providers -provider oqsprovider -provider default"
       - name: Run tests
