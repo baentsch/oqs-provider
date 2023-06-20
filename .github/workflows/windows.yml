@@ -85,7 +85,7 @@ jobs:
             c:\cygwin\opt\openssl32
           key: ${{ runner.os }}-cygwinopenssl32
       - name: build oqs-provider
-        run: bash -c "git config --global --add safe.directory $(cygpath -u $PWD) && cmake -Dliboqs_DIR='${{ env.IP }}' -GNinja -DCMAKE_C_COMPILER=gcc -DOPENSSL_ROOT_DIR=/opt/openssl32 -S . -B _build && cd _build && ninja && cd .."
+        run: bash -c "git config --global --add safe.directory $(cygpath -u $PWD) && liboqs_DIR='${{ env.IP }}' cmake -GNinja -DCMAKE_C_COMPILER=gcc -DOPENSSL_ROOT_DIR=/opt/openssl32 -S . -B _build && cd _build && ninja && cd .."
       - name: Run tests
         run: ctest --test-dir _build
 
