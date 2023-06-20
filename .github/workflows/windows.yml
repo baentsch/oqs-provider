@@ -90,10 +90,14 @@ jobs:
       - name: Adapt oqsprovider.dll name
         run: bash -c "cp oqsprovider-1.dll oqsprovider.dll"
         working-directory: _build/bin
+      - name: Check env
+        run: env
+      - name: Check Openssl
+        run: openssl version
+      - name: Check Openssl (2)
+        run: bash -c "openssl version"
       - name: Run tests
-        run: |
-           ctest -V
-           pwd
+        run: bash -c "echo $PATH && ctest -V"
         working-directory: _build
       - name: Retain oqsprovider.dll
         uses: actions/upload-artifact@v3
