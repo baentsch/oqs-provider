@@ -107,7 +107,7 @@ jobs:
             /opt/openssl32
           key: ${{ runner.os }}-cygwinopenssl32
       - name: build oqs-provider
-        run: bash -c "ls -laR /opt/openssl32 && liboqs_DIR=.local cmake -GNinja -DCMAKE_C_COMPILER=gcc -DOPENSSL_ROOT_DIR=/opt/openssl32 -S . -B _build && cd _build && ninja"
+        run: bash -c "ls -laR '${{ env.IP }}' && liboqs_DIR=.local cmake -Dliboqs_DIR='${{ env.IP }}' -GNinja -DCMAKE_C_COMPILER=gcc -DOPENSSL_ROOT_DIR=/opt/openssl32 -S . -B _build && cd _build && ninjai && cd .."
       - name: Run tests
         run: ctest --test-dir _build
 
@@ -223,4 +223,9 @@ jobs:
       - name: Run tests
         run: |
           ctest -V --test-dir _build
+      - name: Retain oqsprovider.dll
+        uses: actions/upload-artifact@v3
+        with:
+          name: oqs-provider-msvc
+          path: D:/a/oqs-provider/oqs-provider/_build/bin/oqsprovider.dll
 
