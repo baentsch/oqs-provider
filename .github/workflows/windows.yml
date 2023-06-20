@@ -46,7 +46,7 @@ jobs:
         uses: cygwin/cygwin-install-action@master
         with:
           packages: perl git ninja gcc-core cmake make
-      - name: Cache OpenSSL32
+      - name: Retrieve OpenSSL32 from cache
         id: cache-openssl32
         uses: actions/cache@v3
         with:
@@ -66,7 +66,7 @@ jobs:
            gcc --version
            mkdir _build
            cd _build
-           cmake -GNinja -DCMAKE_INSTALL_PREFIX="${{ env.IP }}" ${{ matrix.platform.oqsconfig }} -DCMAKE_C_COMPILER=gcc ..
+           cmake -GNinja -DOPENSSL_ROOT_DIR=/opt/openssl32 -DCMAKE_INSTALL_PREFIX="${{ env.IP }}" ${{ matrix.platform.oqsconfig }} -DCMAKE_C_COMPILER=gcc ..
            ninja
            ninja install
         working-directory: liboqs
@@ -85,7 +85,7 @@ jobs:
             c:\cygwin\opt\openssl32
           key: ${{ runner.os }}-cygwinopenssl32
       - name: build oqs-provider
-        run: bash -c "ls -laR '${{ env.IP }}' && liboqs_DIR=.local cmake -Dliboqs_DIR='${{ env.IP }}' -GNinja -DCMAKE_C_COMPILER=gcc -DOPENSSL_ROOT_DIR=/opt/openssl32 -S . -B _build && cd _build && ninjai && cd .."
+        run: bash -c "git config --global --add safe.directory $(cygpath -u $PWD) && cmake -Dliboqs_DIR='${{ env.IP }}' -GNinja -DCMAKE_C_COMPILER=gcc -DOPENSSL_ROOT_DIR=/opt/openssl32 -S . -B _build && cd _build && ninja && cd .."
       - name: Run tests
         run: ctest --test-dir _build
 
