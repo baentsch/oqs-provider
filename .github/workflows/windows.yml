@@ -31,7 +31,7 @@ jobs:
         id: cache-openssl32
         uses: actions/cache@v3
         with:
-          path: /opt/openssl32
+          path: c:\cygwin64\opt\openssl32
           key: ${{ runner.os }}-cygwinopenssl32
       - name: Checkout provider
         uses: actions/checkout@v3
@@ -53,6 +53,8 @@ jobs:
         uses: cygwin/cygwin-install-action@master
         with:
           packages: perl git ninja gcc-core cmake make
+      - name: Check cygwin location
+        run: dir c:\
       - name: Show /usr/bin
         shell: bash
         run: ls /usr/bin
@@ -98,13 +100,19 @@ jobs:
         if: steps.cache-openssl32.outputs.cache-hit != 'true'
         run: bash -c "./config --prefix=/opt/openssl32 ${{ matrix.platform.config }} && perl configdata.pm --dump && make $MAKE_PARAMS && make install_sw"
         working-directory: openssl
+      - name: Check OpenSSL install
+        run: ls /opt/openssl32
+      - name: Check OpenSSL install 2
+        run: dir c:\cygwin64\opt\openssl32
+      - name: Check OpenSSL install3 
+        run: dir c:\cygwin\opt\openssl32
       - name: Save OpenSSL
         id: cache-openssl-save
         if: steps.cache-openssl32.outputs.cache-hit != 'true'
         uses: actions/cache/save@v3
         with:
           path: |
-            /opt/openssl32
+            c:\cygwin64\opt\openssl32
           key: ${{ runner.os }}-cygwinopenssl32
       - name: build oqs-provider
         run: bash -c "ls -laR '${{ env.IP }}' && liboqs_DIR=.local cmake -Dliboqs_DIR='${{ env.IP }}' -GNinja -DCMAKE_C_COMPILER=gcc -DOPENSSL_ROOT_DIR=/opt/openssl32 -S . -B _build && cd _build && ninjai && cd .."
