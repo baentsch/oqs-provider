@@ -52,31 +52,6 @@ jobs:
         with:
           path: c:\cygwin\opt\openssl32
           key: ${{ runner.os }}-cygwinopenssl32
-      - name: Check cygwin location
-        run: dir c:\
-      - name: Show /usr/bin
-        shell: bash
-        run: ls /usr/bin
-      - name: Output PWD
-        shell: bash
-        run: echo "PWD = $(pwd)" && ls && echo "PATH=$PATH"
-      - name: Output PWD and HOME and $PATH
-        shell: bash
-        run: echo "PWD = $PWD" && echo "HOME=$HOME" && echo "PATH=$PATH"
-      - name: Output PWD (bash)
-        shell: bash
-        run: bash -c "echo 'PWD = $(pwd)' && ls && echo 'PATH=$PATH'"
-      - name: convert PWD (bash)
-        shell: bash
-        run: bash -c "echo $(cygpath -u '$PWD')"
-      - name: output path (win style)
-        shell: bash
-        run: echo "PATH=%PATH%"
-      - name: Show env vars
-        run: env
-      - name: check bash
-        shell: bash
-        run: which bash
 # PATH= empty ?????
 # OQS_USE_OPENSSL=OFF by default on Win32
 # fails:        run: bash -o igncr -c "cmake -GNinja -DCMAKE_INSTALL_PREFIX=$(cygpath -u '$PWD')/../.local ${{ matrix.platform.oqsconfig }} -DCMAKE_C_COMPILER=gcc -S $(cygpath -u '$PWD') -B $(cygpath -u '$PWD')/_build && cmake --build _build --parallel && cmake --install _build"
@@ -109,8 +84,6 @@ jobs:
           path: |
             c:\cygwin\opt\openssl32
           key: ${{ runner.os }}-cygwinopenssl32
-      - name: Check OpenSSL install
-        run: ls /opt/openssl32
       - name: build oqs-provider
         run: bash -c "ls -laR '${{ env.IP }}' && liboqs_DIR=.local cmake -Dliboqs_DIR='${{ env.IP }}' -GNinja -DCMAKE_C_COMPILER=gcc -DOPENSSL_ROOT_DIR=/opt/openssl32 -S . -B _build && cd _build && ninjai && cd .."
       - name: Run tests
