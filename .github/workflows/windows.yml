@@ -27,12 +27,16 @@ jobs:
 # Don't overwhelm github CI VMs:
       MAKE_PARAMS: -j 4
     steps:
-      - name: Show /usr/bin
-        shell: bash
-        run: ls /usr/bin
+      - name: Cache OpenSSL32
+        id: cache-openssl32
+        uses: actions/cache@v3
+        with:
+          path: /opt/openssl32
+          key: ${{ runner.os }}-cygwinopenssl32
       - name: Checkout provider
         uses: actions/checkout@v3
       - name: Checkout openssl
+        if: steps.cache-openssl32.outputs.cache-hit != 'true'
         uses: actions/checkout@v3
         with:
           set-safe-directory: true
@@ -91,12 +95,21 @@ jobs:
            ninja install
         working-directory: liboqs
       - name: build openssl3
-        run: bash -c "which make && echo $PATH && make --version && gcc --version && ./config --prefix='${{ env.IP }}' ${{ matrix.platform.config }} && perl configdata.pm --dump && ls -laR && make $MAKE_PARAMS"
+        if: steps.cache-openssl32.outputs.cache-hit != 'true'
+        run: bash -c "./config --prefix=/opt/openssl32 ${{ matrix.platform.config }} && perl configdata.pm --dump && make $MAKE_PARAMS"
         working-directory: openssl
       - name: build oqs-provider
-        run: bash -c "liboqs_DIR=.local cmake -GNinja -DCMAKE_C_COMPILER=gcc -DOPENSSL_ROOT_DIR='${{ env.IP }}' -S . -B _build && cd _build && ninja"
+        run: bash -c "liboqs_DIR=.local cmake -GNinja -DCMAKE_C_COMPILER=gcc -DOPENSSL_ROOT_DIR=/opt/openssl32 -S . -B _build && cd _build && ninja"
       - name: Run tests
         run: ctest --test-dir _build
+      - name: Save OpenSSL
+        id: cache-openssl-save
+        if: steps.cache-openssl32.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v3
+        with:
+          path: |
+            /opt/openssl32
+          key: ${{ runner.os }}-cygwinopenssl32
 
   msvc:
 # Run a job for each of the specified target architectures:
@@ -118,7 +131,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: c:\openssl32
-          key: ${{ runner.os }}-openssl32
+          key: ${{ runner.os }}-msvcopenssl32
       - uses: actions/checkout@v3
       - name: Checkout OpenSSL master
         if: steps.cache-openssl32.outputs.cache-hit != 'true'
@@ -194,7 +207,7 @@ jobs:
         with:
           path: |
             c:\openssl32
-          key: ${{ runner.os }}-openssl32
+          key: ${{ runner.os }}-msvcopenssl32
 # fails: cmake --build _build --parallel
       - name: check openssl and liboqs
         run: |
